@@ -7,30 +7,97 @@ import Button from "../../ui/button/Button";
 export default function DefaultInputs() {
   const {
     RegisterSQ,
-    HandleAreaChange,
-    area,
     sq,
     HandleNombreComercialChange,
-    HandleDescripcionChange,
   } = useSQData();
 
   return (
-    <ComponentCard title="Información de las sustancias">
+    <ComponentCard title="Reserva para sala de conferencia" desc="ak">
       <form onSubmit={RegisterSQ}>
         <div className="space-y-6">
           <div>
-            <Label>Nombre de la sustancia</Label>
+            <Label>Razón o motivo de la reunión</Label>
             <Input
               required
               type="text"
               value={sq.nombre_comercial}
               name="nombre_comercial"
               autocomplete="off"
-              placeholder="Escriba el nombre de la sustancia"
+              placeholder="Escriba el el motivo de la reunión"
               onChange={HandleNombreComercialChange}
             />
           </div>
           <div>
+            <Label>Fecha de la reunión</Label>
+            <Input
+              required
+              type="date"
+              value={sq.nombre_comercial}
+              name="nombre_comercial"
+              autocomplete="off"
+              onChange={HandleNombreComercialChange}
+            />
+          </div>
+          <div>
+            <Label>Hora de inicio</Label>
+            <Input
+              required
+              type="date"
+              value={sq.nombre_comercial}
+              name="nombre_comercial"
+              autocomplete="off"
+              onChange={HandleNombreComercialChange}
+            />
+          </div>
+          <div>
+            <Label>Hora de fin</Label>
+            <Input
+              required
+              type="date"
+              value={sq.nombre_comercial}
+              name="nombre_comercial"
+              autocomplete="off"
+              onChange={HandleNombreComercialChange}
+            />
+          </div>
+          <div>
+            <Label>Duración</Label>
+            <Input
+              required
+              type="text"
+              value={sq.nombre_comercial}
+              name="nombre_comercial"
+              autocomplete="off"
+              readOnly={true}
+              onChange={HandleNombreComercialChange}
+            />
+          </div>
+          <div>
+            <Label>Participantes</Label>
+            <Input
+              required
+              type="text"
+              value={sq.nombre_comercial}
+              name="nombre_comercial"
+              autocomplete="off"
+              readOnly={true}
+              onChange={HandleNombreComercialChange}
+            />
+          </div>
+          <div>
+            <Label>Cédula del usuario</Label>
+            <Input
+              required
+              type="text"
+              value={sq.nombre_comercial}
+              name="nombre_comercial"
+              autocomplete="off"
+              readOnly={true}
+              placeholder="Ingrese su cédula"
+              onChange={HandleNombreComercialChange}
+            />
+          </div>
+          {/* <div>
             <Label>Seleccione el área</Label>
             <select
               required
@@ -45,8 +112,8 @@ export default function DefaultInputs() {
                 </option>
               ))}
             </select>
-          </div>
-          <div>
+          </div> */}
+          {/* <div>
             <Label>Descripción de la sustancia</Label>
             <textarea
               value={sq.descripcion}
@@ -56,10 +123,10 @@ export default function DefaultInputs() {
               rows={6}
               onChange={HandleDescripcionChange}
             />
-          </div>
+          </div> */}
         </div>
         <div className="flex justify-end">
-          <Button size="sm" type="submit" className="btn-primary w-full mt-3">
+          <Button size="sm" type="submit" className="bg-[#39A900] hover:bg-[#39A900] w-full mt-3">
             Registrar
           </Button>
         </div>
