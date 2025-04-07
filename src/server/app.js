@@ -18,10 +18,10 @@ app.use(cors({
     // If the origin is not allowed, respond with a 403 Forbidden error
     // The allowed origins are specified in the config file
     const allowedOriginsPattern = /^http:\/\/localhost:(5173|5176|5174|3001)$/;
-    const allowedIpPattern = /^http:\/\/10\.7\.167\.119:(5173|5176|5174|3306|3002)$/;
+    // const allowedIpPattern = /^http:\/\/10\.7\.167\.119:(5173|5176|5174|3306|3002)$/;
     
     // Check if the origin is allowed
-    if (allowedOriginsPattern.test(origin) || allowedIpPattern.test(origin) ||  !origin) { 
+    if (allowedOriginsPattern.test(origin)  ||  !origin) { 
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -40,7 +40,7 @@ app.use(express.json());
 app.use(router);
 
 // use port in the config file, but if port is empty, put it 3001
-const port = config().port || 3002;
+const port = config().port;
 
 // Configure database connection
 export const pool = createPool({
