@@ -11,7 +11,7 @@ import { useUserData } from "../../hooks/useUserData";
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useUserData();
-  const [user, setUser] = useState({ cedula: "", password: "" });
+  const [user, setUser] = useState({ username: "ADMIN", password: "" });
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -20,7 +20,7 @@ export default function SignIn() {
     setError(null);
 
     try {
-      await login(user.cedula, user.password, navigate);
+      await login(user.username, user.password, navigate);
     } catch (err: any) {
       setError(err.message);
 
@@ -64,12 +64,12 @@ export default function SignIn() {
                     </Label>
                     <Input
                       required
-                      placeholder="Ingrese su usuario"
-                      name="cedula"
+                      name="username"
                       autocomplete="off"
-                      value={user.cedula}
+                      value={user.username}
+                      readOnly={true}
                       onChange={(e) =>
-                        setUser({ ...user, cedula: e.target.value })
+                        setUser({...user, username: e.target.value})
                       }
                       className="border-sena-lightGray text-sena-gray"
                     />
@@ -116,19 +116,6 @@ export default function SignIn() {
                   </div>
                 </div>
               </form>
-
-              {/* Aquí puedes activar el registro más adelante si quieres */}
-              {/* <div className="mt-5">
-                <p className="text-sm text-center text-sena-gray">
-                  ¿No tienes una cuenta?{" "}
-                  <Link
-                    to="/signup"
-                    className="text-[#39A900] hover:text-[#2E7D00]"
-                  >
-                    Crear una cuenta
-                  </Link>
-                </p>
-              </div> */}
             </div>
           </div>
         </div>
