@@ -3,13 +3,9 @@ import DefaultInputs from "../../components/form/form-elements/DefaultInputs";
 
 export default function FormElements() {
   return (
-    <div>
+    <div className="w-full max-w-6xl mx-auto px-4">
       <PageBreadcrumb pageTitle="Registro de reserva" />
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <div className="space-y-6">
-          <DefaultInputs />
-        </div>
-      </div>
+      <DefaultInputs />
     </div>
   );
 }
