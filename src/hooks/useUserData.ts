@@ -32,51 +32,56 @@ export const useUserData = () => {
   const [success, setSuccess] = useState(false);
   const { isOpen, openModal, closeModal } = useModal();
 
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const response = await fetch("http://10.7.167.119:3002/get-all-users");
-        if (!response.ok) {
-          throw new Error("Failed to fetch users");
-        }
-        const data = await response.json();
-        setUserData(data);
-        setdata(data.length);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    getUserData();
-  }, []);
+  // useEffect(() => {
+  //   const getUserData = async () => {
+  //     try {
+  //       const response = await fetch("http://10.7.167.119:3002/get-all-users");
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch users");
+  //       }
+  //       const data = await response.json();
+  //       setUserData(data);
+  //       setdata(data.length);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+  //   getUserData();
+  // }, []);
 
   const login = async (
-    cedula: string,
+    username: string,
     password: string,
     navigate: (path: string) => void
   ) => {
     try {
-      const response = await axios.post("http://10.7.167.119:3002/login", {
-        cedula,
+      const response = await axios.post("http://localhost:3002/login", {
+        username,
         password,
       });
+
+      console.log(
+        username,
+        password
+      )
   
-      const { success, user } = response.data;
+      const { success, admin } = response.data;
   
-      if (!success || !user) {
+      if (!success || !admin) {
         throw new Error("Número de cédula o contraseña incorrectas");
       }
   
-      const id = user.id;
-      const role = user.role || (user.table === "admins" ? "admin" : "user"); 
+      const id = admin.id;
+      const role = "admin" 
   
       localStorage.setItem("userId", id);
       localStorage.setItem("role", role);
       Cookies.set("userId", id, { expires: 1 });
       Cookies.set("role", role, { expires: 1 });
 
-      navigate("/home");
+      navigate("/");
   
-      return { success: true, user };
+      return { success: true, admin };
     } catch (err: any) {
       throw new Error(
         err.response?.data?.error || "Número de cédula o contraseña incorrectas"
@@ -130,9 +135,9 @@ export const useUserData = () => {
 
   const getAdmins = async (id: string) => {
     try {
-      const response = await fetch(`http://10.7.167.119:3002/get-admins/${id}`); 
+      const response = await fetch(`http://localhost:3002/get-admins/${id}`); 
       const data = await response.json();
-      return data.admins;
+      return data.admin;
     } catch (err: any) {
       throw new Error(
         err.response?.data?.message || "Error al obtener los admins"
