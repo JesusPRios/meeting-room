@@ -10,27 +10,15 @@ export default function UserDropdown() {
   const { getUser, handleLogout, getAdmins } = useUserData();
   const id = Cookies.get("userId");
   const role = Cookies.get("role");
-  const [user, setUser] = useState<{
-    name: string;
-    email?: string;
-    photo?: string;
-  } | null>(null);
   const [isAdmin, setIsAdmin] = useState<{
     name: string;
     email?: string;
-    photo?: string;
   } | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (id && role) {
-      if (role === "user") {
-        getUser(id).then((data) => {
-          if (data && data.success !== false) {
-            setUser(data);
-          }
-        });
-      } else if (role === "admin") {
+     if (role === "admin") {
         getAdmins(id).then((data) => {
           if (data && data.success !== false) {
             setIsAdmin(data);
@@ -54,26 +42,12 @@ export default function UserDropdown() {
         onClick={toggleDropdown}
         className="flex items-center text-gray-700 dark:text-gray-400"
       >
-        <span className="mr-3 overflow-hidden rounded-full">
-          <img
-            src={
-              user?.photo
-                ? `data:image/png;base64,${user.photo}`
-                : isAdmin?.photo
-                ? `data:image/png;base64,${isAdmin.photo}`
-                : "/images/user/owner.jpg"
-            }
-            alt="user"
-            className="h-11 w-11 object-cover"
-          />
-        </span>
-
-        <span className="block mr-1 text-black dark:text-white font-medium text-theme-sm">
-          {user?.name || isAdmin?.name || "Usuario"}
+        <span className="block mr-1 text-white font-semibold text-theme-sm">
+          {isAdmin?.name} (ADMINISTRADOR)
         </span>
 
         <svg
-          className={`stroke-gray-800 dark:stroke-gray-400 transition-transform duration-200 ${
+          className={`transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
           }`}
           width="18"
@@ -84,7 +58,7 @@ export default function UserDropdown() {
         >
           <path
             d="M4.3125 8.65625L9 13.3437L13.6875 8.65625"
-            stroke="currentColor"
+            stroke="#FFF"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -99,11 +73,11 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-black text-theme-sm dark:text-white">
-            {role === "admin" ? isAdmin?.name : user?.name}
+            {isAdmin?.name}
           </span>
 
           <span className="block font-medium text-gray-500 text-theme-sm dark:text-gray-400">
-            {role === "admin" ? isAdmin?.email : user?.email}
+            {isAdmin?.email }
           </span>
         </div>
 
@@ -131,31 +105,6 @@ export default function UserDropdown() {
                 />
               </svg>
               Editar Perfil
-            </DropdownItem>
-          </li>
-          <li>
-            <DropdownItem
-              onItemClick={closeDropdown}
-              tag="a"
-              href="/soporte-tecnico"
-              className="flex items-center gap-3 px-3 py-2 font-medium text-black rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-white dark:hover:bg-white/5 dark:hover:text-gray-300"
-            >
-              <svg
-                className="fill-black group-hover:fill-gray-700 dark:fill-white dark:group-hover:fill-gray-300"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M3.5 12C3.5 7.30558 7.30558 3.5 12 3.5C16.6944 3.5 20.5 7.30558 20.5 12C20.5 16.6944 16.6944 20.5 12 20.5C7.30558 20.5 3.5 16.6944 3.5 12ZM12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM11.0991 7.52507C11.0991 8.02213 11.5021 8.42507 11.9991 8.42507H12.0001C12.4972 8.42507 12.9001 8.02213 12.9001 7.52507C12.9001 7.02802 12.4972 6.62507 12.0001 6.62507H11.9991C11.5021 6.62507 11.0991 7.02802 11.0991 7.52507ZM12.0001 17.3714C11.5859 17.3714 11.2501 17.0356 11.2501 16.6214V10.9449C11.2501 10.5307 11.5859 10.1949 12.0001 10.1949C12.4143 10.1949 12.7501 10.5307 12.7501 10.9449V16.6214C12.7501 17.0356 12.4143 17.3714 12.0001 17.3714Z"
-                  fill=""
-                />
-              </svg>
-              Soporte Técnico
             </DropdownItem>
           </li>
         </ul>
