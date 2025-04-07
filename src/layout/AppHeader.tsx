@@ -117,9 +117,9 @@ const AppHeader: React.FC = () => {
           </div>
           {role === "admin" ? (
             <>
-              <div className="flex items-center gap-2 2xsm:gap-3">
+              {/* <div className="flex items-center gap-2 2xsm:gap-3">
                 <ThemeToggleButton />
-              </div>
+              </div> */}
               <UserDropdown />
             </>
           ) : (
