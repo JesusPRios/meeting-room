@@ -6,8 +6,10 @@ import GridIcon from "../icons/grid.svg";
 import ListIcon from "../icons/list.svg";
 import TableIcon from "../icons/table.svg";
 import FireIcon from "../icons/bolt.svg";
-// import BoxCube from "../icons/box-cube.svg";
 import { NavItem } from "../types/NavItem";
+import Cookies from "js-cookie";
+
+const role = Cookies.get("role");
 
 const navItems: NavItem[] = [
   {
@@ -21,6 +23,14 @@ const navItems: NavItem[] = [
     path: "/form-elements",
   },
   {
+    icon: <img src={FireIcon} alt="Fire Icon" className="dark:invert" />,
+    name: "Iniciar sesión",
+    path: "/signin",
+  },
+];
+
+const navItemsAdmin: NavItem[] = [
+  {
     name: "Reporte",
     icon: <img src={TableIcon} alt="Table Icon" className="dark:invert" />,
     subItems: [
@@ -28,20 +38,8 @@ const navItems: NavItem[] = [
       { name: "Registrar Inventario", path: "/inventario-register" },
     ],
   },
-  {
-    icon: <img src={FireIcon} alt="Fire Icon" className="dark:invert" />,
-    name: "Iniciar sesión",
-    path: "/signin",
-  },
-  // {
-  //   icon: <img src={BoxCube} alt="Box Icon" className="dark:invert" />,
-  //   name: "Áreas",
-  //   subItems: [
-  //     { name: "Listar áreas", path: "/area-list" },
-  //     { name: "Registrar áreas", path: "/areas-register" },
-  //   ],
-  // },
-];
+
+]
 
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
@@ -216,6 +214,7 @@ const AppSidebar: React.FC = () => {
           )}
         </h2>
         {renderMenuItems(navItems)}
+        
       </div>
     </aside>
   );
