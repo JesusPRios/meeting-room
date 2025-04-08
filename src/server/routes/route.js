@@ -64,7 +64,10 @@ router.post("/register-reservation", async (req, res) => {
       return res.status(200).json({ error: "No se encontro el usuario" });
     }
 
-    const user_id = result1[0].id;
+    const user = result1[0];
+    const user_id = user.id;
+    const user_email = user.email;
+    const user_name = user.name;
 
     const sql2 = `INSERT INTO meeting.reservation (reason, date, timeStart, timeEnd, duration, participants, status, user_id)
     VALUES (?,?,?,?,?,?,?,?)
@@ -81,11 +84,44 @@ router.post("/register-reservation", async (req, res) => {
       user_id,
     ]);
 
-    // await sendEmail({
-    //   to: "sistemascip@sena.edu.co",
-    //   subject: "Petición de Reservación",
-    //   text: `Buen día querido Administrador, un usuario ha realizado una reserva, ingrese a su cuenta y realice su función. Link: http:localhost:5173/`,
-    // });
+    await sendEmail({
+      to: "sistemascip@sena.edu.co",
+      subject: "Petición de Reservación",
+      text: `Estimado administrador,
+    
+    Se le informa que el usuario ${user_name} ha realizado una solicitud de reservación.
+    
+    Detalles de la reservación:
+    - Fecha: ${date}
+    - Hora de inicio: ${timeStart}
+    - Hora de finalización: ${timeEnd}
+    - Motivo: ${reason}
+    
+    Por favor, ingrese a su cuenta para gestionar esta petición:
+    http://localhost:5173/
+    
+    Cordial saludo,
+    Sistema de Reservaciones`,
+    });
+
+    await sendEmail({
+      to: user_email,
+      from: "Oficina de Sistemas <mjesusprimera@gmail.com>",
+      subject:
+        "Solicitud de Reserva de Sala de Juntas Pendiente de Autorización",
+      text: `Estimado/a ${user_name},
+
+Gracias por tu solicitud de reserva para la sala de juntas. Queremos informarte que tu solicitud se encuentra actualmente pendiente de validación y autorización. En breve, nuestro equipo revisará la disponibilidad y condiciones para confirmar la reserva.
+
+Te notificaremos lo antes posible sobre el estado de tu solicitud.
+
+Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos.
+
+Gracias por tu comprensión y paciencia.
+
+Saludos cordiales,
+Ofician de Sistemas`,
+    });
 
     res.status(201).json({
       message: "Reservation registered successfully",
@@ -128,6 +164,80 @@ router.get("/get-reservation-by-date/:date", async (req, res) => {
     }
 
     res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.get("/get-reservation-by-id/:id", async (req, res) => {
+  const id = req.params.id;
+  const sql = `
+    SELECT 
+      r.id,
+      r.reason,
+      r.date,
+      r.timeStart,
+      r.timeEnd,
+      r.duration,
+      r.participants,
+      r.status,
+      r.user_id,
+      u.name AS nombre_usuario,
+      u.cedula AS cedula_user
+    FROM 
+      meeting.reservation r
+    JOIN 
+      meeting.user u ON r.user_id = u.id
+    WHERE 
+      r.id = ?
+  `;
+
+  try {
+    const [result] = await pool.query(sql, [id]);
+
+    if (result.length === 0) {
+      res.status(200).json({ error: "No se encontró ninguna reservación" });
+      return;
+    }
+
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.post("/accept-reservation/:id-:cedula", async (req, res) => {
+  const id = req.params.id;
+  const cedula = req.params.cedula;
+
+  try {
+    const sql = `UPDATE meeting.reservation SET status = 'Confirmada' WHERE id = ?`;
+    await pool.query(sql, [id]);
+
+    const sql2 = `SELECT email FROM meeting.user WHERE cedula = ?`;
+    const [result2] = await pool.query(sql2, [cedula]);
+
+    if (result2.length === 0) {
+      return res.status(200).json({ error: "No se encontro el usuario" });
+    }
+
+    const email = result2[0].email;
+
+    await sendEmail({
+      to: email,
+      subject: "Reservación Aceptada",
+      text: `Buen día, su reserva ha sido aceptada.`,
+      priority: "high",
+      headers: {
+        "X-Priority": "1",
+        "X-MSMail-Priority": "High",
+        Importance: "high",
+      },
+    });
+
+    res.status(200).json({ message: "Reservation accepted successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
