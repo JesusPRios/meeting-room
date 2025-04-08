@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Reservation } from "./../types/Reservation";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Alert from "../components/ui/alert/Alert";
+import { useNavigate } from "react-router-dom";
 
 export const useReservation = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -31,6 +33,13 @@ export const useReservation = () => {
     participants: "",
     cedula_user: "",
   });
+  const [reservedRange, setReservedRange] = useState<{ start: string, end: string } | null>(null);
+  const [completas, setCompletas] = useState([]);
+  const [rechazadas, setRechazadas] = useState([]);
+  const [recientes, setRecientes] = useState([]);
+  const navigate = useNavigate();
+  const [showCompletas, setShowCompletas] = useState(false);
+  const [showRechazadas, setShowRechazadas] = useState(false);
 
   useEffect(() => {
     const getReservation = async () => {
@@ -44,6 +53,28 @@ export const useReservation = () => {
       }
     };
     getReservation();
+  }, []);
+
+  useEffect(() => {
+    const fetchReservaciones = async () => {
+      try {
+        const res = await axios.get("http://localhost:3002/get-reservation");
+        const data = res.data;
+
+        const hoy = new Date();
+        const fechaFiltredas = data.filter((r: any) => new Date(r.date) >= hoy && r.status === "Pendiente");
+        const completesFiltradas = data.filter((r: any) => r.status === "Confirmada");
+        const rechazadasFiltradas = data.filter((r: any) => r.status === "Cancelada");
+
+        setCompletas(completesFiltradas);
+        setRechazadas(rechazadasFiltradas);
+        setRecientes(fechaFiltredas);
+      } catch (error) {
+        console.error("Error al cargar reservaciones:", error);
+      }
+    };
+
+    fetchReservaciones();
   }, []);
 
   useEffect(() => {
@@ -67,6 +98,19 @@ export const useReservation = () => {
     }
   }, [reser.timeStart, reser.timeEnd]);
 
+  const getStatusClass = (status: string) => {
+    return `px-4 py-1.5 text-sm font-semibold text-center rounded-full
+      ${
+        status === "Pendiente"
+          ? "bg-red-100 text-red-700"
+          : status === "Confirmada"
+          ? "bg-green-100 text-green-700"
+          : status === "Cancelada"
+          ? "bg-yellow-100 text-yellow-700"
+          : "bg-gray-200 text-gray-700"
+      }`;
+  };
+
   const handleReasonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReser((prevInformation) => ({
       ...(prevInformation || {}),
@@ -74,12 +118,17 @@ export const useReservation = () => {
     }));
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = new Date(e.target.value);
+  
     setReser((prevInformation) => ({
       ...(prevInformation || {}),
-      date: new Date(e.target.value),
+      date: selectedDate,
     }));
-  };
+  
+    // Llamar a la función para obtener las reservas en esa fecha
+    await getReservationByDate(selectedDate);
+  };  
 
   const handleTimeStartChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setReser((prevInformation) => ({
@@ -102,7 +151,7 @@ export const useReservation = () => {
     }));
   };
 
-  const handleParticipantsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleParticipantsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReser((prevInformation) => ({
       ...(prevInformation || {}),
       participants: e.target.value,
@@ -134,12 +183,36 @@ export const useReservation = () => {
         setInformation(null); 
       } else {
         setInformation(data[0]); 
+
+        setReservedRange({
+          start: data[0].timeStart,
+          end: data[0].timeEnd,
+        });
+
       }
     } catch (error) {
       console.log(error);
       setInformation(null);
     }
   };  
+
+  const getReservationById = async (id: number) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3002/get-reservation-by-id/${id}`
+      );
+      const data = response.data;
+
+      if (data.error) {
+        setInformation(null); 
+      } else {
+        setInformation(data[0]); 
+      }
+    } catch (error) {
+      console.log(error);
+      setInformation(null);
+    }
+  };
 
   const registerReservation = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,6 +259,26 @@ export const useReservation = () => {
     });
   };  
 
+  const AcceptReservation = async (id: number, cedula: string) => {
+    try {
+      const response = await fetch(`http://localhost:3002/accept-reservation/${id}-${cedula}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.ok) {
+        Alert({
+          title: "Reserva aceptada",
+          message: "La reserva se ha aceptado correctamente.",
+          variant: "success",
+        })
+        navigate("/inventario-register");
+      }
+    } catch (error) {
+      console.error("Error al aceptar la reserva:", error);
+    }
+  };
+
   return {
     reservation,
     getReservationByDate,
@@ -202,6 +295,18 @@ export const useReservation = () => {
     handleParticipantsChange,
     handleCedulaUserChange,
     reser,
-    formatTime
+    formatTime,
+    reservedRange,
+    setReservedRange,
+    recientes,
+    completas,
+    rechazadas,
+    getReservationById,
+    AcceptReservation,
+    showCompletas,
+    showRechazadas,
+    getStatusClass,
+    setShowCompletas,
+    setShowRechazadas
   };
 };
