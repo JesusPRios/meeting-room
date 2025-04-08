@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
@@ -27,11 +26,11 @@ export default function MetricsCharts() {
     if (selectedDate) {
       getReservationByDate(selectedDate);
     }
-  }, [selectedDate]);
+  }, [getReservationByDate, selectedDate]);
 
   return (
     <>
-      <PageBreadcrumb pageTitle="Vista general de reservaciones" />
+      <PageBreadcrumb pageTitle="Consulta General - Reservaciones" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white rounded-2xl shadow p-4">
           <div className="scale-90 origin-top-left">
@@ -45,62 +44,71 @@ export default function MetricsCharts() {
 
         <div className="col-span-2">
           <ComponentCard
-            title={`Información de las reservaciones - ${
+            title={`Información de las reservaciones para el ${
               formattedDate ? formattedDate : ""
             }`}
           >
             {selectedDate ? (
               <div>
                 {information ? (
-                <Table>
-                <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-                  <TableRow>
-                    <TableCell
-                      isHeader
-                      className="px-5 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
-                    >
-                      User
-                    </TableCell>
-                    <TableCell
-                      isHeader
-                      className="px-5 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
-                    >
-                      Hora inicio
-                    </TableCell>
-                    <TableCell
-                      isHeader
-                      className="px-5 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
-                    >
-                      Hora fin
-                    </TableCell>
-                    <TableCell
-                      isHeader
-                      className="px-5 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
-                    >
-                      Estado
-                    </TableCell>
-                  </TableRow>
-                </TableHeader>
-              
-                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-sm">
-                  <TableRow>
-                    <TableCell className="sm:px-6 text-start text-gray-900 dark:text-white/90">
-                      {information.nombre_usuario}
-                    </TableCell>
-                    <TableCell className="sm:px-6 text-start text-gray-900 dark:text-white/90">
-                      {formatTime(information.timeStart)}
-                    </TableCell>
-                    <TableCell className="sm:px-6 text-start text-gray-900 dark:text-white/90">
-                      {formatTime(information.timeEnd)}
-                    </TableCell>
-                    <TableCell className="sm:px-6 text-start text-gray-900 dark:text-white/90">
-                      {information.status}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-              
-               
+                  <Table>
+                    <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                      <TableRow>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
+                        >
+                          Usuario 
+                        </TableCell>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
+                        >
+                          Hora inicio
+                        </TableCell>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
+                        >
+                          Hora fin
+                        </TableCell>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
+                        >
+                          Estado
+                        </TableCell>
+                      </TableRow>
+                    </TableHeader>
+
+                    <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-sm">
+                      <TableRow>
+                        <TableCell className="sm:px-6 text-start text-gray-900 dark:text-white/90">
+                          {information.nombre_usuario}
+                        </TableCell>
+                        <TableCell className="sm:px-6 text-start text-gray-900 dark:text-white/90">
+                          {formatTime(information.timeStart)}
+                        </TableCell>
+                        <TableCell className="sm:px-6 text-start text-gray-900 dark:text-white/90">
+                          {formatTime(information.timeEnd)}
+                        </TableCell>
+                        <TableCell
+                          className={`px-4 py-1.5 text-sm font-semibold text-center rounded-full
+    ${
+      information.status === "Pendiente"
+        ? "bg-red-100 text-red-700 "
+        : information.status === "Confirmada"
+        ? "bg-green-100 text-green-700  "
+        : information.status === "Cancelada"
+        ? "bg-yellow-100 text-yellow-700  "
+        : "bg-gray-200 text-gray-700  "
+    }`}
+                        >
+                          {information.status}
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
                 ) : (
                   <p className="text-sm text-gray-500">
                     No hay reservas para esta fecha.
