@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { User } from "../types/user";
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -59,11 +59,6 @@ export const useUserData = () => {
         username,
         password,
       });
-
-      console.log(
-        username,
-        password
-      )
   
       const { success, admin } = response.data;
   
@@ -79,7 +74,7 @@ export const useUserData = () => {
       Cookies.set("userId", id, { expires: 1 });
       Cookies.set("role", role, { expires: 1 });
 
-      navigate("/");
+      navigate("/inventario-register");
   
       return { success: true, admin };
     } catch (err: any) {
@@ -169,7 +164,7 @@ export const useUserData = () => {
     Cookies.remove("userId");
     Cookies.remove("role");
   
-    navigate("/", { replace: true });
+    navigate("/signin", { replace: true });
   };  
 
   const handleSave = async (id: string, event: React.FormEvent) => {
