@@ -1,13 +1,7 @@
 import SMTPConnection from "smtp-connection";
 
 // Function to send an email using SMTP
-export const sendEmail = ({
-  to,
-  from,
-  subject,
-  text,
-  attachments = [],
-}) => {
+export const sendEmail = ({ to, from, subject, text, attachments = [] }) => {
   // Create a new SMTP connection
   return new Promise((resolve, reject) => {
     const smtp = new SMTPConnection({
@@ -75,10 +69,11 @@ export const sendEmail = ({
             {
               from: "mjesusprimera@gmail.com",
               to,
-              headers: { 
-                "From": "Soporte Técnico - EcoTRACK <mjesusprimera@gmail.com>",
+              headers: {
+                From: "Oficina de Sistemas <mjesusprimera@gmail.com>",
                 "Reply-To": from,
-                "X-Priority": "1",
+                "X-Priority": "1", // 1 = Alta, 3 = Normal, 5 = Baja
+                Priority: "urgent", // Opcional pero útil
                 Importance: "high",
               },
             },
