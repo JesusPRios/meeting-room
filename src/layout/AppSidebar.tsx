@@ -31,15 +31,15 @@ const navItems: NavItem[] = [
 
 const navItemsAdmin: NavItem[] = [
   {
-    name: "Reporte",
+    name: "Inicio - Admin",
     icon: <img src={TableIcon} alt="Table Icon" className="dark:invert" />,
-    subItems: [
-      { name: "Listar Inventario", path: "/inventario-info" },
-      { name: "Registrar Inventario", path: "/inventario-register" },
-    ],
+    path: "/inventario-register"
+    // subItems: [
+    //   { name: "Listar Inventario", path: "/inventario-info" },
+    //   { name: "Registrar Inventario", path: "/inventario-register" },
+    // ],
   },
-
-]
+];
 
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
@@ -214,7 +214,15 @@ const AppSidebar: React.FC = () => {
           )}
         </h2>
         {renderMenuItems(navItems)}
-        
+
+        {role === "admin" && (
+          <>
+            <h2 className="mb-2 mt-6 text-xs uppercase text-white font-medium">
+              Administración
+            </h2>
+            {renderMenuItems(navItemsAdmin)}
+          </>
+        )}
       </div>
     </aside>
   );
