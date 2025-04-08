@@ -52,7 +52,7 @@ export default function SignIn() {
                   Iniciar sesión
                 </h1>
                 <p className="text-[13px] text-sena-gray text-center">
-                  Ingrese su usuario y contraseña para acceder al sistema.
+                  Ingrese su contraseña para acceder al sistema.
                 </p>
               </div>
 
