@@ -15,8 +15,31 @@ export default function DefaultInputs() {
     handleDurationChange,
     handleParticipantsChange,
     handleCedulaUserChange,
+    reservedRange,
   } = useReservation();
 
+  const isTimeOverlapping = (start: string, end: string) => {
+    if (!reservedRange) return false;
+
+    const toMinutes = (t: string) => {
+      const [h, m] = t.split(":").map(Number);
+      return h * 60 + m;
+    };
+
+    const startMin = toMinutes(start);
+    const endMin = toMinutes(end);
+    const resStart = toMinutes(reservedRange.start);
+    const resEnd = toMinutes(reservedRange.end);
+
+    // Si se solapan los rangos
+    return !(endMin <= resStart || startMin >= resEnd);
+  };
+
+  const showTimeConflict =
+    reser?.timeStart &&
+    reser?.timeEnd &&
+    reservedRange &&
+    isTimeOverlapping(reser.timeStart, reser.timeEnd);
 
   return (
     <ComponentCard
@@ -88,14 +111,15 @@ export default function DefaultInputs() {
 
           <div>
             <Label>Participantes</Label>
-            <Input
+            <textarea
               required
-              type="text"
               value={reser?.participants}
               name="participants"
-              autocomplete="off"
+              autoComplete="off"
               // readOnly={true}
               onChange={handleParticipantsChange}
+              rows={5}
+              className="bg-transparent text-black border-gray-300 focus:border-brand-300 focus:ring focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800 w-full rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs focus:outline-none"
             />
           </div>
           <div>
@@ -113,10 +137,19 @@ export default function DefaultInputs() {
           </div>
         </div>
 
+        {showTimeConflict && (
+          <p className="text-red-600 font-semibold text-sm my-4 col-span-2">
+            ⚠️ El rango de hora seleccionado se cruza con otra reserva (
+            {reservedRange?.start} - {reservedRange?.end}). Por favor, elige
+            otra hora.
+          </p>
+        )}
+
         <div className="flex justify-end">
           <Button
             size="sm"
             type="submit"
+            disabled={showTimeConflict? true : false}
             className="bg-[#39A900] hover:bg-[#39A900] w-full mt-3"
           >
             Registrar
