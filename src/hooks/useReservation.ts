@@ -43,6 +43,7 @@ export const useReservation = () => {
   const [showCompletas, setShowCompletas] = useState(false);
   const [showRechazadas, setShowRechazadas] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedEstado, setSelectedEstado] = useState<string>("");
 
   useEffect(() => {
     const getReservation = async () => {
@@ -50,11 +51,33 @@ export const useReservation = () => {
         const [response] = await Promise.all([
           axios.get("http://localhost:3002/get-reservation"),
         ]);
-        setReservation(response.data);
+
+        const now = new Date();
+        const updatedReservations = await Promise.all(
+          response.data.map(async (res: Reservation) => {
+            const reservationEnd = new Date(`${res.date}T${res.timeEnd}`);
+
+            if (reservationEnd < now && res.status !== "Finalizada") {
+              await axios.put(
+                `http://localhost:3002/update-reservation/${res.id}`,
+                {
+                  status: "Finalizada",
+                }
+              );
+
+              return { ...res, status: "Finalizada" };
+            }
+
+            return res;
+          })
+        );
+
+        setReservation(updatedReservations);
       } catch (error) {
         console.log(error);
       }
     };
+
     getReservation();
   }, []);
 
@@ -111,6 +134,16 @@ export const useReservation = () => {
           : "bg-gray-200 text-gray-700"
       }`;
   };
+
+  const handleEstadoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedEstado(e.target.value);
+  };
+  const getFilteredReservaciones = () => {
+    if (selectedEstado === "confirmadas") return completas;
+    if (selectedEstado === "rechazada") return rechazadas;
+    return [];
+  };
+  const filteredReservas = getFilteredReservaciones();
 
   const handleReasonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReser((prevInformation) => ({
@@ -315,5 +348,8 @@ export const useReservation = () => {
     error,
     setError,
     navigate,
+    handleEstadoChange,
+    filteredReservas,
+    selectedEstado,
   };
 };
