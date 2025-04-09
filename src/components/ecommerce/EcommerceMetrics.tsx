@@ -11,8 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
+import Cookies from "js-cookie";
 
 export default function MetricsCharts() {
+  const role = Cookies.get("role");
   const {
     selectedDate,
     setSelectedDate,
@@ -27,6 +29,15 @@ export default function MetricsCharts() {
       getReservationByDate(selectedDate);
     }
   }, [getReservationByDate, selectedDate]);
+
+  if (role === "admin") {
+    return (
+      <div>
+        Querido administrador, esta vista es solo para usuarios generales.
+        dirijase a <a href="/inventario-register" className="text-[#39A900] hover:underline">la página principal.</a>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -58,7 +69,7 @@ export default function MetricsCharts() {
                           isHeader
                           className="px-5 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
                         >
-                          Usuario 
+                          Usuario
                         </TableCell>
                         <TableCell
                           isHeader
