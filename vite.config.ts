@@ -13,7 +13,7 @@ function getFreePort() {
       // If it is in use, the connection will be refused
       // If it is not in use, the connection will be successful
       execSync(`lsof -i:${port}`);
-    } catch (e) {
+    } catch {
       // If the connection fails, the port is free
       // Return the port number
       return port;
