@@ -127,6 +127,7 @@ Ofician de Sistemas`,
       message: "Reservation registered successfully",
       id: result2.insertId,
     });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -216,19 +217,28 @@ router.post("/accept-reservation/:id-:cedula", async (req, res) => {
     const sql = `UPDATE meeting.reservation SET status = 'Confirmada' WHERE id = ?`;
     await pool.query(sql, [id]);
 
-    const sql2 = `SELECT email FROM meeting.user WHERE cedula = ?`;
+    const sql2 = `SELECT * FROM meeting.user WHERE cedula = ?`;
     const [result2] = await pool.query(sql2, [cedula]);
 
     if (result2.length === 0) {
       return res.status(200).json({ error: "No se encontro el usuario" });
     }
 
-    const email = result2[0].email;
+    const user = result2[0];
+    const user_email = user.email;
+    const user_name = user.name;
 
     await sendEmail({
-      to: email,
+      to: user_email,
       subject: "Reservación Aceptada",
-      text: `Buen día, su reserva ha sido aceptada.`,
+      text: `Estimado/a ${user_name},
+    
+    Nos complace informarte que tu solicitud de reserva para la sala de juntas ha sido aceptada y confirmada exitosamente.
+    
+    Te agradecemos por seguir el procedimiento correspondiente y te recordamos respetar los horarios y condiciones establecidos para el uso del espacio.
+    
+    Saludos cordiales,
+    Oficina de Sistemas`,
       priority: "high",
       headers: {
         "X-Priority": "1",
@@ -237,7 +247,50 @@ router.post("/accept-reservation/:id-:cedula", async (req, res) => {
       },
     });
 
-    res.status(200).json({ message: "Reservation accepted successfully" });
+    res.status(200).json({ success: true, message: "Reservation accepted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.post("/reject-reservation/:id-:cedula", async (req, res) => {
+  const id = req.params.id;
+  const cedula = req.params.cedula;
+
+  try {
+    const sql = `UPDATE meeting.reservation SET status = 'Rechazada' WHERE id = ?`;
+    await pool.query(sql, [id]);
+
+    const sql2 = `SELECT * FROM meeting.user WHERE cedula = ?`;
+    const [result2] = await pool.query(sql2, [cedula]);
+
+    if (result2.length === 0) {
+      return res.status(200).json({ error: "No se encontro el usuario" });
+    }
+    const user = result2[0];
+    const user_email = user.email;
+    const user_name = user.name;
+
+    await sendEmail({
+      to: user_email,
+      from: "Oficina de Sistemas <sistemascip@sena.edu.co>",
+      subject: "Reservación Rechazada",
+      text: `Estimado/a ${user_name},
+
+Lamentamos informarte que tu solicitud de reserva para la sala de juntas ha sido rechazada.
+
+Esto puede deberse a la no disponibilidad del espacio en la fecha y hora solicitada, o al incumplimiento de alguna condición establecida para el uso de la sala.
+
+Si deseas más información o necesitas asistencia para realizar una nueva solicitud, estamos a tu disposición para ayudarte.
+
+Agradecemos tu comprensión.
+
+Saludos cordiales,
+Oficina de Sistemas`,
+    });
+
+    res.status(200).json({ success: true, message: "Reservation rejected successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
