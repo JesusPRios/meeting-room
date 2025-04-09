@@ -19,14 +19,20 @@ import EditArea from "./pages/Areas/EditArea";
 import Report from "./pages/Report/Report";
 import EditInventario from "./pages/Inventario/EditInventario";
 import ReportInventario from "./pages/Report/ReporteInventario";
-import SignUp from "./pages/AuthPages/SignUp";
 import SignIn from "./pages/AuthPages/SignIn";
+import ProtectedRoute from "./context/ProtectedRoute";
 
 export default function App() {
   return (
     <Router>
       <Routes>
-        <Route element={<AppLayout />}>
+        <Route
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route index path="/" element={<Ecommerce />} />
           <Route path="/profile" element={<UserProfiles />} />
           <Route path="/calendar" element={<Calendar />} />
@@ -47,7 +53,6 @@ export default function App() {
           <Route path="/report-inventario" element={<ReportInventario />} />
         </Route>
 
-        <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
 
         <Route path="*" element={<NotFound />} />
