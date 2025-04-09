@@ -115,7 +115,7 @@ Gracias por tu solicitud de reserva para la sala de juntas. Queremos informarte 
 
 Te notificaremos lo antes posible sobre el estado de tu solicitud.
 
-Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos.
+Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos a traves de el correo electronico: sistemascip@sena.edu.co
 
 Gracias por tu comprensión y paciencia.
 
@@ -235,7 +235,7 @@ router.post("/accept-reservation/:id-:cedula", async (req, res) => {
     
     Nos complace informarte que tu solicitud de reserva para la sala de juntas ha sido aceptada y confirmada exitosamente.
     
-    Te agradecemos por seguir el procedimiento correspondiente y te recordamos respetar los horarios y condiciones establecidos para el uso del espacio.
+    Te agradecemos por seguir el procedimiento correspondiente y te recordamos respetar los horarios y condiciones establecidos para el uso del espacio. Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos a traves de el correo electronico: sistemascip@sena.edu.co
     
     Saludos cordiales,
     Oficina de Sistemas`,
@@ -282,7 +282,7 @@ Lamentamos informarte que tu solicitud de reserva para la sala de juntas ha sido
 
 Esto puede deberse a la no disponibilidad del espacio en la fecha y hora solicitada, o al incumplimiento de alguna condición establecida para el uso de la sala.
 
-Si deseas más información o necesitas asistencia para realizar una nueva solicitud, estamos a tu disposición para ayudarte.
+Si deseas más información o necesitas asistencia para realizar una nueva solicitud, estamos a tu disposición para ayudarte. Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos a traves de el correo electronico: sistemascip@sena.edu.co
 
 Agradecemos tu comprensión.
 
