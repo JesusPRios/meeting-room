@@ -26,13 +26,7 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route
-          element={
-            <ProtectedRoute>
-              <AppLayout />
-            </ProtectedRoute>
-          }
-        >
+        <Route element={<AppLayout />}>
           <Route index path="/" element={<Ecommerce />} />
           <Route path="/profile" element={<UserProfiles />} />
           <Route path="/calendar" element={<Calendar />} />
@@ -40,8 +34,26 @@ export default function App() {
           <Route path="/form-elements" element={<FormElements />} />
           <Route path="/basic-tables" element={<BasicTables />} />
           <Route path="/sq/details/:id" element={<DetailsSQ />} />
-          <Route path="/sq/edit/:id" element={<EditSQ />} />
-          <Route path="/inventario-register" element={<RegisterInventario />} />
+          <Route
+            path="/inventario-register"
+            element={
+              <>
+                <ProtectedRoute>
+                  <RegisterInventario />
+                </ProtectedRoute>
+              </>
+            }
+          />
+           <Route
+            path="/sq/edit/"
+            element={
+              <>
+                <ProtectedRoute>
+                  <EditSQ />
+                </ProtectedRoute>
+              </>
+            }
+          />
           <Route path="/inventario-info" element={<InfoInventario />} />
           <Route path="/edit-inventario/:id" element={<EditInventario />} />
           <Route path="/pictogramas-register" element={<PictoRegister />} />
