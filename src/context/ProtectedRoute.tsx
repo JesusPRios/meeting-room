@@ -3,10 +3,12 @@ import Cookies from "js-cookie";
 import { PrivateRouteProps } from "../types/privateRouteProps";
 
 const ProtectedRoute = ({ children }: PrivateRouteProps) => {
-  const isAuthenticated = Cookies.get("role");
-  if (!isAuthenticated) {
+  const role = Cookies.get("role");
+
+  if (!role || role !== "admin") {
     return <Navigate to="/" replace />;
   }
+
   return children;
 };
 
