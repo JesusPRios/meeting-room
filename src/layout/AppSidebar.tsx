@@ -9,8 +9,6 @@ import FireIcon from "../icons/bolt.svg";
 import { NavItem } from "../types/NavItem";
 import Cookies from "js-cookie";
 
-const role = Cookies.get("role");
-
 const navItems: NavItem[] = [
   {
     icon: <img src={GridIcon} alt="Grid Icon" className="dark:invert" />,
@@ -33,17 +31,14 @@ const navItemsAdmin: NavItem[] = [
   {
     name: "Inicio - Admin",
     icon: <img src={TableIcon} alt="Table Icon" className="dark:invert" />,
-    path: "/inventario-register"
-    // subItems: [
-    //   { name: "Listar Inventario", path: "/inventario-info" },
-    //   { name: "Registrar Inventario", path: "/inventario-register" },
-    // ],
+    path: "/inventario-register",
   },
 ];
 
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
+  const role = Cookies.get("role"); 
   const [openSubmenu, setOpenSubmenu] = useState<{
     type: "main";
     index: number;
@@ -118,6 +113,7 @@ const AppSidebar: React.FC = () => {
                     className={`ml-auto w-5 h-5 transition-transform duration-200 dark:invert ${
                       openSubmenu?.index === index ? "rotate-180" : ""
                     }`}
+                    alt="Chevron"
                   />
                 )}
               </button>
@@ -206,23 +202,15 @@ const AppSidebar: React.FC = () => {
         </Link>
       </div>
       <div className="py-8">
-        <h2 className="mb-4 mt-[-60px] text-xs uppercase text-[white] font-medium">
-          {isExpanded || isHovered || isMobileOpen ? (
-            "Menú de opciones"
-          ) : (
-            <img src="" />
-          )}
-        </h2>
-        {renderMenuItems(navItems)}
-
-        {role === "admin" && (
-          <>
-            <h2 className="mb-2 mt-6 text-xs uppercase text-white font-medium">
-              Administración
-            </h2>
-            {renderMenuItems(navItemsAdmin)}
-          </>
+        {(isExpanded || isHovered || isMobileOpen) && (
+          <h2 className="mb-4 mt-[-60px] text-xs uppercase text-white font-medium">
+            {role === "admin" ? "Administración" : "Menú de opciones"}
+          </h2>
         )}
+
+        {role === "admin"
+          ? renderMenuItems(navItemsAdmin)
+          : renderMenuItems(navItems)}
       </div>
     </aside>
   );
