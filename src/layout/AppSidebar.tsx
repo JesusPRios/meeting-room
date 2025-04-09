@@ -33,6 +33,11 @@ const navItemsAdmin: NavItem[] = [
     icon: <img src={TableIcon} alt="Table Icon" className="dark:invert" />,
     path: "/inventario-register",
   },
+  {
+    name: "Historial de Reservaciones",
+    icon: <img src={TableIcon} alt="Table Icon" className="dark:invert" />,
+    path: "/sq/edit",
+  },
 ];
 
 const AppSidebar: React.FC = () => {
