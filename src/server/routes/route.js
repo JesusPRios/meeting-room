@@ -332,4 +332,19 @@ router.get("/get-admins/:id", async (req, res) => {
   }
 });
 
+router.put("/update-reservation/:id", async (req, res) => {
+  const { estado } = req.body;
+  const id = req.params.id;
+
+  try {
+    const sql = `UPDATE meeting.reservation SET status = ? WHERE id = ?`;
+    await pool.query(sql, [estado, id]);
+
+    res.status(200).json({ success: true, message: "Reservation updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 export default router;
