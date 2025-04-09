@@ -1,95 +1,66 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import ComponentCard from "../../components/common/ComponentCard";
-import Input from "../../components/form/input/InputField";
-import useSQData from "../../hooks/useSQData";
-import Button from "../../components/ui/button/Button";
-import Label from "../../components/form/Label";
-import { useParams } from "react-router-dom";
-import { useEffect } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import { IoEye } from "react-icons/io5";
+import { useReservation } from "../../hooks/useReservation";
 
 export default function EditSQ() {
-  const { id } = useParams();
-  const {
-    getSQID,
-    HandleAreaChange,
-    area,
-    sq,
-    HandleNombreComercialChange,
-    HandleDescripcionChange,
-    UpdateSQ,
-  } = useSQData();
-
-  useEffect(() => {
-    if (id) {
-      getSQID(Number(id));
-    }
-  }, [id]);
+  const { filteredReservas, handleEstadoChange, selectedEstado } =
+    useReservation();
 
   return (
     <>
-      <PageBreadcrumb pageTitle="Editar información de las sustancias" />
-      <div className="flex">
-        <ComponentCard
-          title="Información de la sustancia"
-          className="w-full max-w-lg"
-        >
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              UpdateSQ(Number(id));
-            }}
+      <PageBreadcrumb pageTitle="Consulta de Reservaciones" />
+      <ComponentCard title="📋 Historial de Reservaciones">
+        <div className="flex items-center gap-4 mb-4">
+          <label className="text-sm font-medium whitespace-nowrap">
+            Filtrar por estado:
+          </label>
+          <select
+            className="border border-gray-300 rounded-md p-2 w-64 text-sm dark:bg-gray-800 dark:text-white"
+            value={selectedEstado}
+            onChange={handleEstadoChange}
           >
-            <div className="space-y-6">
-              <div>
-                <Label>Nombre de la sustancia</Label>
-                <Input
-                  required
-                  type="text"
-                  value={sq?.nombre_comercial || ""}
-                  name="nombre_comercial"
-                  autocomplete="off"
-                  placeholder="Escriba el nombre de la sustancia"
-                  onChange={HandleNombreComercialChange}
-                />
-              </div>
-              <div>
-                <Label>Seleccione el área</Label>
-                <select
-                  required
-                  autoComplete="off"
-                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm shadow-theme-xs focus:border-brand-300 focus:ring focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
-                  onChange={HandleAreaChange}
-                  value={sq?.area_id}
-                >
-                  <option value="">Seleccione una área</option>
-                  {area.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <Label>Descripción de la sustancia</Label>
-                <textarea
-                  value={sq?.descripcion || ""}
-                  name="descripcion"
-                  placeholder="Escriba una descripción"
-                  className="w-full rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs focus:outline-none bg-transparent text-black border-gray-300 focus:border-brand-300 focus:ring focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
-                  rows={6}
-                  onChange={HandleDescripcionChange}
-                />
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <Button size="sm" className="btn-primary w-full mt-3">
-                Actualizar
-              </Button>
-            </div>
-          </form>
-        </ComponentCard>
-      </div>
+            <option value="">Seleccione un estado</option>
+            <option value="confirmadas">Confirmadas</option>
+            <option value="rechazada">Rechazadas</option>
+            <option value="finalizada">Finalizadas</option>
+          </select>
+        </div>
+
+        {selectedEstado === "" ? (
+          <p className="text-gray-500 text-sm">
+            Seleccione un estado para ver el historial.
+          </p>
+        ) : filteredReservas.length > 0 ? (
+          <ul className="list-none pl-0 space-y-2">
+            {filteredReservas.map((r: any) => (
+              <ComponentCard title="Resultado de la busqueda">
+                <div className="text-[13px]">
+                  {" "}
+                  <li
+                    key={r.id}
+                    className="flex justify-between items-center text-gray-800 dark:text-white/80 border-b border-gray-100 dark:border-gray-700 py-1"
+                  >
+                    <span className="font-medium">{r.reason}</span>
+                    <div className="flex gap-2">
+                      <a
+                        href={`/edit-inventario/${r.id}`}
+                        className="p-2 rounded-lg dark:bg-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition border dark:border-gray-700 dark:hover:border-gray-600"
+                      >
+                        <IoEye size={20} />
+                      </a>
+                    </div>
+                  </li>
+                </div>
+              </ComponentCard>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-500 text-sm">
+            No hay reservaciones con estado {selectedEstado}.
+          </p>
+        )}
+      </ComponentCard>
     </>
   );
 }
