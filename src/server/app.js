@@ -18,10 +18,10 @@ app.use(cors({
     // If the origin is not allowed, respond with a 403 Forbidden error
     // The allowed origins are specified in the config file
     const allowedOriginsPattern = /^http:\/\/localhost:(5173|5176|5174|3001)$/;
-    // const allowedIpPattern = /^http:\/\/10\.7\.167\.119:(5173|5176|5174|3306|3002)$/;
+    const allowedIpPattern = /^http:\/\/192\.168\.200\.5:(5173|5176|5174|3306|3002)$/; //192.168.200.5
     
     // Check if the origin is allowed
-    if (allowedOriginsPattern.test(origin)  ||  !origin) { 
+    if (allowedOriginsPattern.test(origin) || allowedIpPattern.test(origin) ||  !origin) { 
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
