@@ -1,42 +1,25 @@
 import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router";
 import AppLayout from "./layout/AppLayout";
-import Blank from "./pages/Blank";
-import Calendar from "./pages/Calendar";
 import Ecommerce from "./pages/Dashboard/ECommerce";
-import FormElements from "./pages/Forms/FormElements";
+import FormElements from "./pages/Reservations/RegisterReservation";
 import NotFound from "./pages/OtherPage/NotFound";
-import BasicTables from "./pages/Tables/BasicTables";
-import UserProfiles from "./pages/UserProfiles";
-import DetailsSQ from "./pages/SQ/DetailsSQ";
-import EditSQ from "./pages/SQ/EditSQ";
-import RegisterInventario from "./pages/Inventario/RegisterInventario";
-import PictoRegister from "./pages/Pictograma/PictoRegister";
-import ListPictogramas from "./pages/Pictograma/ListPictogramas";
-import InfoInventario from "./pages/Inventario/InfoIventario";
-import RegisterArea from "./pages/Areas/RegisterArea";
-import AreaList from "./pages/Areas/AreaList";
-import EditArea from "./pages/Areas/EditArea";
-import Report from "./pages/Report/Report";
-import EditInventario from "./pages/Inventario/EditInventario";
-import ReportInventario from "./pages/Report/ReporteInventario";
+import EditSQ from "./pages/Reservations/ReservationHistory";
+import RegisterInventario from "./pages/Admin/AdminHome";
 import SignIn from "./pages/AuthPages/SignIn";
 import ProtectedRoute from "./context/ProtectedRoute";
+import ReservationDetails from "./pages/Reservations/DetailsReservations";
+import ReservationQuery from "./pages/Reservations/GetReservationAdmin";
 
 export default function App() {
   return (
     <Router>
       <Routes>
-      <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/" element={<Navigate to="/home" replace />} />
         <Route element={<AppLayout />}>
           <Route index path="/home" element={<Ecommerce />} />
-          <Route path="/profile" element={<UserProfiles />} />
-          <Route path="/calendar" element={<Calendar />} />
-          <Route path="/soporte-tecnico" element={<Blank />} />
-          <Route path="/form-elements" element={<FormElements />} />
-          <Route path="/basic-tables" element={<BasicTables />} />
-          <Route path="/sq/details/:id" element={<DetailsSQ />} />
+          <Route path="/meeting-reservation" element={<FormElements />} />
           <Route
-            path="/inventario-register"
+            path="/admin/home"
             element={
               <>
                 <ProtectedRoute>
@@ -45,8 +28,8 @@ export default function App() {
               </>
             }
           />
-           <Route
-            path="/sq/edit/"
+          <Route
+            path="/reservations-history/"
             element={
               <>
                 <ProtectedRoute>
@@ -55,17 +38,12 @@ export default function App() {
               </>
             }
           />
-          <Route path="/inventario-info" element={<InfoInventario />} />
-          <Route path="/edit-inventario/:id" element={<EditInventario />} />
-          <Route path="/pictogramas-register" element={<PictoRegister />} />
-          <Route path="/pictogramas" element={<ListPictogramas />} />
-          <Route path="/areas-register" element={<RegisterArea />} />
-          <Route path="/area-list" element={<AreaList />} />
-          <Route path="/area-edit/:id" element={<EditArea />} />
-          <Route path="/report-info" element={<Report />} />
-          <Route path="/report-inventario" element={<ReportInventario />} />
+          <Route
+            path="/details-reservations/:id"
+            element={<ReservationDetails />}
+          />
+          <Route path="/get-reservation-by-id/:id" element={<ReservationQuery />} />
         </Route>
-
         <Route path="/signin" element={<SignIn />} />
 
         <Route path="*" element={<NotFound />} />
