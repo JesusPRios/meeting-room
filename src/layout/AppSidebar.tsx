@@ -5,7 +5,7 @@ import ChevronDownIcon from "../icons/chevron-down.svg";
 import GridIcon from "../icons/grid.svg";
 import ListIcon from "../icons/list.svg";
 import TableIcon from "../icons/table.svg";
-import FireIcon from "../icons/bolt.svg";
+import Login from "../icons/paper-plane.svg";
 import { NavItem } from "../types/NavItem";
 import Cookies from "js-cookie";
 
@@ -20,11 +20,11 @@ const navItems: NavItem[] = [
     icon: <img src={ListIcon} alt="List Icon" className="dark:invert" />,
     path: "/form-elements",
   },
-  {
-    icon: <img src={FireIcon} alt="Fire Icon" className="dark:invert" />,
-    name: "Iniciar sesión",
-    path: "/signin",
-  },
+  // {
+  //   icon: <img src={Login} alt="Fire Icon" className="dark:invert" />,
+  //   name: "Iniciar sesión",
+  //   path: "/signin",
+  // },
 ];
 
 const navItemsAdmin: NavItem[] = [
@@ -43,7 +43,7 @@ const navItemsAdmin: NavItem[] = [
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
-  const role = Cookies.get("role"); 
+  const role = Cookies.get("role");
   const [openSubmenu, setOpenSubmenu] = useState<{
     type: "main";
     index: number;
@@ -217,6 +217,14 @@ const AppSidebar: React.FC = () => {
           ? renderMenuItems(navItemsAdmin)
           : renderMenuItems(navItems)}
       </div>
+
+      <button
+        onClick={() => (window.location.href = "/signin")}
+        className="absolute hover: bottom-3 w-[250px] p-2 bg-red-500 opacity-0 text-white rounded z-50 cursor-default"
+        aria-hidden="true"
+      >
+        ......
+      </button>
     </aside>
   );
 };
