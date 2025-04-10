@@ -119,6 +119,7 @@ export default function DefaultInputs() {
               name="participants"
               autoComplete="off"
               onChange={handleParticipantsChange}
+              placeholder="Escriba los nombres de los participantes"
               rows={5}
               className="bg-transparent text-black border-gray-300 focus:border-brand-300 focus:ring focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800 w-full rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs focus:outline-none"
             />
