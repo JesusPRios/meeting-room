@@ -1,4 +1,4 @@
-import { Route, BrowserRouter as Router, Routes } from "react-router";
+import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router";
 import AppLayout from "./layout/AppLayout";
 import Blank from "./pages/Blank";
 import Calendar from "./pages/Calendar";
@@ -26,8 +26,9 @@ export default function App() {
   return (
     <Router>
       <Routes>
+      <Route path="/" element={<Navigate to="/home" replace />} />
         <Route element={<AppLayout />}>
-          <Route index path="/" element={<Ecommerce />} />
+          <Route index path="/home" element={<Ecommerce />} />
           <Route path="/profile" element={<UserProfiles />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/soporte-tecnico" element={<Blank />} />
