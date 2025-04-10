@@ -113,8 +113,7 @@ export const useReservation = () => {
             fechaInicio.getTime() - ahora.getTime();
           const diferenciaEnSegundos = diferenciaEnMilisegundos / 1000;
 
-          // Compara si falta exactamente 1 hora con un margen de ±30 segundos
-          const margen = 30; // segundos
+          const margen = 30; 
           const unaHoraEnSegundos = 3600;
 
           if (
@@ -150,6 +149,23 @@ export const useReservation = () => {
       setReser((prev) => ({ ...prev, duration: durationStr }));
     }
   }, [reser.timeStart, reser.timeEnd]);
+
+  const calcularDuracion = (start: string, end: string) => {
+    const [hStart, mStart] = start.split(":").map(Number);
+    const [hEnd, mEnd] = end.split(":").map(Number);
+
+    const startMinutes = hStart * 60 + mStart;
+    const endMinutes = hEnd * 60 + mEnd;
+
+    const diff = endMinutes - startMinutes;
+
+    if (diff <= 0) return "0h 0m";
+
+    const horas = Math.floor(diff / 60);
+    const minutos = diff % 60;
+
+    return `${horas}h ${minutos}m`;
+  };
 
   const getStatusClass = (status: string) => {
     return `px-4 py-1.5 text-sm font-semibold text-center rounded-full
@@ -193,17 +209,41 @@ export const useReservation = () => {
   };
 
   const handleTimeStartChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setReser((prevInformation) => ({
-      ...(prevInformation || {}),
-      timeStart: e.target.value,
-    }));
+    const value = e.target.value;
+
+    setReser((prevInformation) => {
+      const updated = {
+        ...(prevInformation || {}),
+        timeStart: value,
+      };
+
+      if (updated.timeEnd) {
+        updated.duration = calcularDuracion(value, updated.timeEnd);
+      }
+
+      return updated;
+    });
+
+    e.target.blur(); 
   };
 
   const handleTimeEndChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setReser((prevInformation) => ({
-      ...(prevInformation || {}),
-      timeEnd: e.target.value,
-    }));
+    const value = e.target.value;
+
+    setReser((prevInformation) => {
+      const updated = {
+        ...(prevInformation || {}),
+        timeEnd: value,
+      };
+
+      if (updated.timeStart) {
+        updated.duration = calcularDuracion(updated.timeStart, value);
+      }
+
+      return updated;
+    });
+
+    e.target.blur(); 
   };
 
   const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -222,14 +262,18 @@ export const useReservation = () => {
     }));
   };
 
-  const handleCedulaUserChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCedulaUserChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const value = e.target.value;
     setCedulaInput(value);
     reser.cedula_user = value;
-  
+
     if (value.length >= 3) {
       try {
-        const res = await axios.get(`http://10.4.32.29:3002/search-users?cedula=${value}`);
+        const res = await axios.get(
+          `http://10.4.32.29:3002/search-users?cedula=${value}`
+        );
         setSugerencias(res.data);
       } catch (err) {
         console.error("Error buscando usuarios:", err);
@@ -237,7 +281,7 @@ export const useReservation = () => {
     } else {
       setSugerencias([]);
     }
-  };  
+  };
 
   const formattedDate = selectedDate?.toLocaleDateString("es-ES", {
     weekday: "long",
@@ -290,12 +334,21 @@ export const useReservation = () => {
   const registerReservation = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const duracionCalculada = calcularDuracion(reser.timeStart, reser.timeEnd);
+
+    if (duracionCalculada === "0h 0m") {
+      alert(
+        "La duración no puede ser 0h 0m. Por favor, revisa las horas ingresadas."
+      );
+      return;
+    }
+
     const data = {
       timeStart: reser.timeStart,
       timeEnd: reser.timeEnd,
       reason: reser.reason,
       date: reser.date.toISOString().split("T")[0],
-      duration: reser.duration,
+      duration: duracionCalculada, 
       participants: reser.participants,
       cedula_user: reser.cedula_user,
       status: "Pendiente",
@@ -312,10 +365,11 @@ export const useReservation = () => {
         }
       );
 
-      const { success } = await response.data;
-      return success;
+      if (response.status === 200) {
+        navigate("/admin/home");
+      }
     } catch (error) {
-      console.error("Error al registrar la sustancia química", error);
+      console.error("Error al registrar la reserva", error);
     }
   };
 
