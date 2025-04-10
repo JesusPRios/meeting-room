@@ -352,21 +352,36 @@ router.put("/update-reservation/:id", async (req, res) => {
   }
 });
 
-router.post("notify-admin-reservation-pending/:id", async (req, res) => {
+router.post("/notify-admin-reservation-pending/:id", async (req, res) => {
   const { id } = req.params;
+  console.log(id);
 
   try {
     const sql = `SELECT * FROM meeting.reservation WHERE id = ?`;
-    const { rows } = await pool.query(sql, [id]);
+    const [rows] = await pool.query(sql, [id]);
     const reservation = rows[0];
-    const { reason, date, timeStart, timeEnd } = reservation;
+
+    if (!reservation) {
+      return res.status(404).json({ error: "Reservation not found" });
+    }
+    const { date, timeStart } = reservation;
+
+    const fechaFormateada = new Date(date).toLocaleDateString("es-CO", {
+      weekday: "long",
+      year: "numeric",
+      month: "long", 
+      day: "numeric",
+    });
+
+    const capitalizada =
+      fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
 
     const data = {
       to: "sistemascip@sena.edu.co",
       subject: "Reservación Pendiente",
       text: `Estimado Administrador,
 
-Se le informa que una reservación programada para el día ${date} está pendiente de autorización.
+Se le informa que una reservación programada para el día ${capitalizada} está pendiente de autorización.
 La reunión está agendada para comenzar a las ${timeStart}.
 
 Por favor, acceda a su cuenta para gestionar esta petición:
@@ -377,12 +392,25 @@ Sistema de Reservaciones
       `,
     };
 
-    await sgMail.send(data);
+    await sendEmail(data);
 
     res.status(200).json({ success: true });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.get("/search-users", async (req, res) => {
+  const { cedula } = req.query;
+
+  try {
+    const sql = `SELECT id, name, cedula FROM meeting.user WHERE cedula LIKE ? LIMIT 5`;
+    const [rows] = await pool.query(sql, [`${cedula}%`]);
+    res.json(rows);
+  } catch (error) {
+    console.error("Error buscando usuarios por cédula:", error);
+    res.status(500).json({ error: "Error en el servidor" });
   }
 });
 
