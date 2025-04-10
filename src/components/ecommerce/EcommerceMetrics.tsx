@@ -34,7 +34,13 @@ export default function MetricsCharts() {
     return (
       <div>
         Querido administrador, esta vista es solo para usuarios generales.
-        dirijase a <a href="/inventario-register" className="text-[#39A900] hover:underline">la página principal.</a>
+        dirijase a{" "}
+        <a
+          href="/inventario-register"
+          className="text-[#39A900] hover:underline"
+        >
+          la página principal.
+        </a>
       </div>
     );
   }
@@ -55,7 +61,7 @@ export default function MetricsCharts() {
 
         <div className="col-span-2">
           <ComponentCard
-            title={`Información de las reservaciones para el ${
+            title={`Información de las reservaciones ${
               formattedDate ? formattedDate : ""
             }`}
           >
