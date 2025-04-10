@@ -98,7 +98,7 @@ router.post("/register-reservation", async (req, res) => {
     - Motivo: ${reason}
     
     Por favor, ingrese a su cuenta para gestionar esta petición:
-    http://localhost:5173/
+    http://10.4.32.29:5173/
     
     Cordial saludo,
     Sistema de Reservaciones`,
@@ -127,7 +127,6 @@ Ofician de Sistemas`,
       message: "Reservation registered successfully",
       id: result2.insertId,
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -247,7 +246,9 @@ router.post("/accept-reservation/:id-:cedula", async (req, res) => {
       },
     });
 
-    res.status(200).json({ success: true, message: "Reservation accepted successfully" });
+    res
+      .status(200)
+      .json({ success: true, message: "Reservation accepted successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -290,7 +291,9 @@ Saludos cordiales,
 Oficina de Sistemas`,
     });
 
-    res.status(200).json({ success: true, message: "Reservation rejected successfully" });
+    res
+      .status(200)
+      .json({ success: true, message: "Reservation rejected successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -340,7 +343,43 @@ router.put("/update-reservation/:id", async (req, res) => {
     const sql = `UPDATE meeting.reservation SET status = ? WHERE id = ?`;
     await pool.query(sql, [estado, id]);
 
-    res.status(200).json({ success: true, message: "Reservation updated successfully" });
+    res
+      .status(200)
+      .json({ success: true, message: "Reservation updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.post("notify-admin-reservation-pending/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const sql = `SELECT * FROM meeting.reservation WHERE id = ?`;
+    const { rows } = await pool.query(sql, [id]);
+    const reservation = rows[0];
+    const { reason, date, timeStart, timeEnd } = reservation;
+
+    const data = {
+      to: "sistemascip@sena.edu.co",
+      subject: "Reservación Pendiente",
+      text: `Estimado Administrador,
+
+Se le informa que una reservación programada para el día ${date} está pendiente de autorización.
+La reunión está agendada para comenzar a las ${timeStart}.
+
+Por favor, acceda a su cuenta para gestionar esta petición:
+http://10.4.32.29:5173/
+
+Cordial saludo,
+Sistema de Reservaciones
+      `,
+    };
+
+    await sgMail.send(data);
+
+    res.status(200).json({ success: true });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
