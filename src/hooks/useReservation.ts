@@ -44,6 +44,8 @@ export const useReservation = () => {
   const [showRechazadas, setShowRechazadas] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedEstado, setSelectedEstado] = useState<string>("");
+  const [cedulaInput, setCedulaInput] = useState("");
+  const [sugerencias, setSugerencias] = useState<any[]>([]);
 
   useEffect(() => {
     const getReservation = async () => {
@@ -88,12 +90,15 @@ export const useReservation = () => {
         const data = res.data;
         const ahora = new Date();
 
-        const pendientes = data.filter(
-          (r: any) => new Date(r.date) >= ahora && r.status === "Pendiente"
-        );
+        const pendientes = data.filter((r: any) => {
+          const fechaHoraReserva = new Date(r.date);
+          const [hora, minuto, segundo] = r.timeStart.split(":").map(Number);
+          fechaHoraReserva.setHours(hora, minuto, segundo || 0);
+
+          return fechaHoraReserva >= ahora && r.status === "Pendiente";
+        });
 
         const confirmadas = data.filter((r: any) => r.status === "Confirmada");
-
         const rechazadas = data.filter((r: any) => r.status === "Rechazada");
 
         pendientes.forEach((reserva: any) => {
@@ -103,12 +108,20 @@ export const useReservation = () => {
             .map(Number);
           fechaInicio.setHours(hora, minuto, segundo || 0);
 
+          const ahora = new Date();
           const diferenciaEnMilisegundos =
             fechaInicio.getTime() - ahora.getTime();
-          const diferenciaEnHoras = diferenciaEnMilisegundos / (1000 * 60 * 60);
+          const diferenciaEnSegundos = diferenciaEnMilisegundos / 1000;
 
-          if (diferenciaEnHoras > 0 && diferenciaEnHoras <= 2) {
-            NotifyAdminReservationPending(reserva.id); 
+          // Compara si falta exactamente 1 hora con un margen de ±30 segundos
+          const margen = 30; // segundos
+          const unaHoraEnSegundos = 3600;
+
+          if (
+            diferenciaEnSegundos >= unaHoraEnSegundos - margen &&
+            diferenciaEnSegundos <= unaHoraEnSegundos + margen
+          ) {
+            NotifyAdminReservationPending(reserva.id);
           }
         });
 
@@ -209,12 +222,22 @@ export const useReservation = () => {
     }));
   };
 
-  const handleCedulaUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setReser((prevInformation) => ({
-      ...(prevInformation || {}),
-      cedula_user: e.target.value,
-    }));
-  };
+  const handleCedulaUserChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCedulaInput(value);
+    reser.cedula_user = value;
+  
+    if (value.length >= 3) {
+      try {
+        const res = await axios.get(`http://10.4.32.29:3002/search-users?cedula=${value}`);
+        setSugerencias(res.data);
+      } catch (err) {
+        console.error("Error buscando usuarios:", err);
+      }
+    } else {
+      setSugerencias([]);
+    }
+  };  
 
   const formattedDate = selectedDate?.toLocaleDateString("es-ES", {
     weekday: "long",
@@ -386,5 +409,9 @@ export const useReservation = () => {
     filteredReservas,
     selectedEstado,
     NotifyAdminReservationPending,
+    cedulaInput,
+    setCedulaInput,
+    sugerencias,
+    setSugerencias,
   };
 };
