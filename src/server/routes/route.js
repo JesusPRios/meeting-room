@@ -123,9 +123,9 @@ Saludos cordiales,
 Ofician de Sistemas`,
     });
 
-    res.status(201).json({
+    res.status(200).json({
       message: "Reservation registered successfully",
-      id: result2.insertId,
+      success: true
     });
   } catch (error) {
     console.error(error);
