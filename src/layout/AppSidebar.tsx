@@ -5,7 +5,6 @@ import ChevronDownIcon from "../icons/chevron-down.svg";
 import GridIcon from "../icons/grid.svg";
 import ListIcon from "../icons/list.svg";
 import TableIcon from "../icons/table.svg";
-import Login from "../icons/paper-plane.svg";
 import { NavItem } from "../types/NavItem";
 import Cookies from "js-cookie";
 
@@ -13,12 +12,12 @@ const navItems: NavItem[] = [
   {
     icon: <img src={GridIcon} alt="Grid Icon" className="dark:invert" />,
     name: "Inicio",
-    path: "/",
+    path: "/home",
   },
   {
     name: "Reservar reunión",
     icon: <img src={ListIcon} alt="List Icon" className="dark:invert" />,
-    path: "/form-elements",
+    path: "/meeting-reservation",
   },
   // {
   //   icon: <img src={Login} alt="Fire Icon" className="dark:invert" />,
@@ -31,12 +30,12 @@ const navItemsAdmin: NavItem[] = [
   {
     name: "Inicio - Admin",
     icon: <img src={TableIcon} alt="Table Icon" className="dark:invert" />,
-    path: "/inventario-register",
+    path: "/admin/home",
   },
   {
     name: "Historial de Reservaciones",
     icon: <img src={TableIcon} alt="Table Icon" className="dark:invert" />,
-    path: "/sq/edit",
+    path: "/reservations-history",
   },
 ];
 
