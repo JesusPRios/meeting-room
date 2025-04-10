@@ -16,6 +16,10 @@ export default function DefaultInputs() {
     handleParticipantsChange,
     handleCedulaUserChange,
     reservedRange,
+    cedulaInput,
+    setCedulaInput,
+    sugerencias,
+    setSugerencias,
   } = useReservation();
 
   const isTimeOverlapping = (start: string, end: string) => {
@@ -31,7 +35,6 @@ export default function DefaultInputs() {
     const resStart = toMinutes(reservedRange.start);
     const resEnd = toMinutes(reservedRange.end);
 
-    // Si se solapan los rangos
     return !(endMin <= resStart || startMin >= resEnd);
   };
 
@@ -67,7 +70,6 @@ export default function DefaultInputs() {
             <Input
               required
               type="date"
-              value={reser?.date ? reser.date.toISOString().split("T")[0] : ""}
               name="date"
               autocomplete="off"
               onChange={handleDateChange}
@@ -116,24 +118,39 @@ export default function DefaultInputs() {
               value={reser?.participants}
               name="participants"
               autoComplete="off"
-              // readOnly={true}
               onChange={handleParticipantsChange}
               rows={5}
               className="bg-transparent text-black border-gray-300 focus:border-brand-300 focus:ring focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800 w-full rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs focus:outline-none"
             />
           </div>
-          <div>
+          <div className="relative">
             <Label>Cédula del usuario</Label>
             <Input
               required
               type="text"
-              value={reser?.cedula_user}
+              value={cedulaInput}
               name="cedula_user"
               autocomplete="off"
-              // readOnly={true}
               placeholder="Ingrese su cédula"
               onChange={handleCedulaUserChange}
             />
+            {sugerencias.length > 0 && (
+              <ul className="absolute z-10 text-sm w-full bg-white border rounded-md shadow-md mt-1 max-h-60 overflow-y-auto">
+                {sugerencias.map((usuario) => (
+                  <li
+                    key={usuario.id}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      setCedulaInput(usuario.cedula); 
+                      reser.cedula_user = usuario.cedula;
+                      setSugerencias([]);
+                    }}
+                  >
+                    {usuario.name} - {usuario.cedula}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
 
@@ -149,7 +166,7 @@ export default function DefaultInputs() {
           <Button
             size="sm"
             type="submit"
-            disabled={showTimeConflict? true : false}
+            disabled={showTimeConflict ? true : false}
             className="bg-[#39A900] hover:bg-[#39A900] w-full mt-3"
           >
             Registrar
