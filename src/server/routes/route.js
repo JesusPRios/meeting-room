@@ -98,7 +98,7 @@ router.post("/register-reservation", async (req, res) => {
     - Motivo: ${reason}
     
     Por favor, ingrese a su cuenta para gestionar esta petición:
-    http://10.4.32.29:5173/
+    http://10.4.32.29:5173/signin
     
     Cordial saludo,
     Sistema de Reservaciones`,
@@ -385,7 +385,7 @@ Se le informa que una reservación programada para el día ${capitalizada} está
 La reunión está agendada para comenzar a las ${timeStart}.
 
 Por favor, acceda a su cuenta para gestionar esta petición:
-http://10.4.32.29:5173/
+http://10.4.32.29:5173/signin
 
 Cordial saludo,
 Sistema de Reservaciones
