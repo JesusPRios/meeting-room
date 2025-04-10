@@ -1,5 +1,5 @@
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import DefaultInputs from "../../components/form/form-elements/ContemtReservation";
+import DefaultInputs from "./ContentReservation";
 
 export default function FormElements() {
   return (
