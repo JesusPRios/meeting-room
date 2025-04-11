@@ -4,7 +4,7 @@ import { useSidebar } from "../context/SidebarContext";
 import ChevronDownIcon from "../icons/chevron-down.svg";
 import GridIcon from "../icons/grid.svg";
 import ListIcon from "../icons/list.svg";
-import TableIcon from "../icons/table.svg";
+import DocsIcon from "../icons/docs.svg";
 import { NavItem } from "../types/NavItem";
 import Cookies from "js-cookie";
 
@@ -15,7 +15,7 @@ const navItems: NavItem[] = [
     path: "/home",
   },
   {
-    name: "Reservar reunión",
+    name: "Hacer reservación",
     icon: <img src={ListIcon} alt="List Icon" className="dark:invert" />,
     path: "/meeting-reservation",
   },
@@ -29,12 +29,12 @@ const navItems: NavItem[] = [
 const navItemsAdmin: NavItem[] = [
   {
     name: "Inicio - Admin",
-    icon: <img src={TableIcon} alt="Table Icon" className="dark:invert" />,
+    icon: <img src={GridIcon} alt="Table Icon" className="dark:invert" />,
     path: "/admin/home",
   },
   {
-    name: "Historial de Reservaciones",
-    icon: <img src={TableIcon} alt="Table Icon" className="dark:invert" />,
+    name: "Historial de reservas",
+    icon: <img src={DocsIcon} alt="Table Icon" className="dark:invert" />,
     path: "/reservations-history",
   },
 ];
