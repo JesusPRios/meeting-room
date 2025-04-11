@@ -4,7 +4,7 @@ import Input from "../../components/form/input/InputField";
 import Button from "../../components/ui/button/Button";
 import { useReservation } from "../../hooks/useReservation";
 
-export default function DefaultInputs() {
+export default function Content() {
   const {
     registerReservation,
     reser,
