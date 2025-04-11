@@ -78,7 +78,7 @@ export default function UserDropdown() {
           </span>
         </div>
 
-        <hr  className="mt-3"/>
+        <hr className="mt-3"/>
 
         <button
           onClick={() => handleLogout(navigate)}
