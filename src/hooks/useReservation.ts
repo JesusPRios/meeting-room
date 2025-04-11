@@ -7,19 +7,7 @@ import { useNavigate } from "react-router-dom";
 export const useReservation = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [reservation, setReservation] = useState<Reservation[]>([]);
-  const [information, setInformation] = useState<Reservation | null>({
-    id: 0,
-    user_id: 0,
-    timeStart: "",
-    timeEnd: "",
-    status: "",
-    reason: "",
-    date: new Date(),
-    duration: "",
-    participants: "",
-    cedula_user: "",
-    nombre_usuario: "",
-  });
+  const [information, setInformation] = useState<Reservation[]>([]);
   const [reser, setReser] = useState({
     id: 0,
     user_id: 0,
@@ -31,6 +19,7 @@ export const useReservation = () => {
     duration: "",
     participants: "",
     cedula_user: "",
+    repetitive: "",
   });
   const [reservedRange, setReservedRange] = useState<{
     start: string;
@@ -48,91 +37,67 @@ export const useReservation = () => {
   const [sugerencias, setSugerencias] = useState<any[]>([]);
 
   useEffect(() => {
-    const getReservation = async () => {
-      try {
-        const [response] = await Promise.all([
-          axios.get("http://localhost:3002/get-reservation"),
-        ]);
-
-        const now = new Date();
-        const updatedReservations = await Promise.all(
-          response.data.map(async (res: Reservation) => {
-            const reservationEnd = new Date(`${res.date}T${res.timeEnd}`);
-
-            if (reservationEnd < now && res.status !== "Finalizada") {
-              await axios.put(
-                `http://localhost:3002/update-reservation/${res.id}`,
-                {
-                  status: "Finalizada",
-                }
-              );
-
-              return { ...res, status: "Finalizada" };
-            }
-
-            return res;
-          })
-        );
-
-        setReservation(updatedReservations);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getReservation();
-  }, []);
-
-  useEffect(() => {
-    const fetchReservaciones = async () => {
+    const gestionarReservaciones = async () => {
       try {
         const res = await axios.get("http://localhost:3002/get-reservation");
         const data = res.data;
         const ahora = new Date();
 
-        const pendientes = data.filter((r: any) => {
-          const fechaHoraReserva = new Date(r.date);
-          const [hora, minuto, segundo] = r.timeStart.split(":").map(Number);
-          fechaHoraReserva.setHours(hora, minuto, segundo || 0);
+        // 1. Actualizamos estados a "Finalizada" si ya pasó la hora
+        const actualizadas = await Promise.all(
+          data.map(async (reserva: any) => {
+            const finReserva = new Date(`${reserva.date}T${reserva.timeEnd}`);
+            if (finReserva < ahora && reserva.status !== "Finalizada") {
+              await axios.put(
+                `http://localhost:3002/update-reservation/${reserva.id}`,
+                { status: "Finalizada" }
+              );
+              return { ...reserva, status: "Finalizada" };
+            }
+            return reserva;
+          })
+        );
 
-          return fechaHoraReserva >= ahora && r.status === "Pendiente";
+        // 2. Clasificamos las reservas por estado
+        const pendientes = data.filter((r: any) => {
+          const fechaHora = new Date(r.date);
+          const [h, m, s] = r.timeStart.split(":").map(Number);
+          fechaHora.setHours(h, m, s || 0);
+          return fechaHora >= ahora && r.status === "Pendiente";
         });
 
         const confirmadas = data.filter((r: any) => r.status === "Confirmada");
         const rechazadas = data.filter((r: any) => r.status === "Rechazada");
 
+        // 3. Notificamos si hay alguna reunión pendiente dentro de 1h ± margen
         pendientes.forEach((reserva: any) => {
           const fechaInicio = new Date(reserva.date);
-          const [hora, minuto, segundo] = reserva.timeStart
-            .split(":")
-            .map(Number);
-          fechaInicio.setHours(hora, minuto, segundo || 0);
+          const [h, m, s] = reserva.timeStart.split(":").map(Number);
+          fechaInicio.setHours(h, m, s || 0);
 
-          const ahora = new Date();
-          const diferenciaEnMilisegundos =
-            fechaInicio.getTime() - ahora.getTime();
-          const diferenciaEnSegundos = diferenciaEnMilisegundos / 1000;
-
-          const margen = 30;
-          const unaHoraEnSegundos = 3600;
+          const diferenciaSegundos =
+            (fechaInicio.getTime() - ahora.getTime()) / 1000;
+          const margen = 30; // segundos
+          const unaHora = 3600; // segundos
 
           if (
-            diferenciaEnSegundos >= unaHoraEnSegundos - margen &&
-            diferenciaEnSegundos <= unaHoraEnSegundos + margen
+            diferenciaSegundos >= unaHora - margen &&
+            diferenciaSegundos <= unaHora + margen
           ) {
             NotifyAdminReservationPending(reserva.id);
           }
         });
 
+        setReservation(actualizadas); // Todas
+        setRecientes(pendientes);
         setCompletas(confirmadas);
         setRechazadas(rechazadas);
-        setRecientes(pendientes);
       } catch (error) {
-        console.error("Error al cargar reservaciones:", error);
+        console.error("Error al gestionar reservaciones:", error);
       }
     };
 
-    fetchReservaciones();
+    gestionarReservaciones();
   }, []);
 
   useEffect(() => {
@@ -183,11 +148,13 @@ export const useReservation = () => {
   const handleEstadoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedEstado(e.target.value);
   };
+
   const getFilteredReservaciones = () => {
-    if (selectedEstado === "confirmadas") return completas;
-    if (selectedEstado === "rechazada") return rechazadas;
+    if (selectedEstado === "Confirmada") return completas;
+    if (selectedEstado === "Rechazada") return rechazadas;
     return [];
   };
+
   const filteredReservas = getFilteredReservaciones();
 
   const handleReasonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -296,18 +263,18 @@ export const useReservation = () => {
       const data = response.data;
 
       if (data.error) {
-        setInformation(null);
+        setInformation([]);
       } else {
-        setInformation(data[0]);
+        setInformation(data);
 
-        setReservedRange({
-          start: data[0].timeStart,
-          end: data[0].timeEnd,
-        });
+        // setReservedRange({
+        //   start: data[0].timeStart,
+        //   end: data[0].timeEnd,
+        // });
       }
     } catch (error) {
       console.log(error);
-      setInformation(null);
+      setInformation([]);
     }
   };
 
@@ -319,13 +286,13 @@ export const useReservation = () => {
       const data = response.data;
 
       if (data.error) {
-        setInformation(null);
+        setInformation([]);
       } else {
         setInformation(data[0]);
       }
     } catch (error) {
       console.log(error);
-      setInformation(null);
+      setInformation([]);
     }
   };
 
@@ -341,6 +308,11 @@ export const useReservation = () => {
       return;
     }
 
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+
+    const repetitive = formData.get("repetitive"); //
+
     const data = {
       timeStart: reser.timeStart,
       timeEnd: reser.timeEnd,
@@ -350,7 +322,10 @@ export const useReservation = () => {
       participants: reser.participants,
       cedula_user: reser.cedula_user,
       status: "Pendiente",
+      repetitive: repetitive,
     };
+
+    console.log("Data to register:", data);
 
     try {
       const response = await axios.post(

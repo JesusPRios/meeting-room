@@ -22,9 +22,9 @@ export default function EditSQ() {
             onChange={handleEstadoChange}
           >
             <option value="">Seleccione un estado</option>
-            <option value="Confirmadas">Confirmadas</option>
-            <option value="Rechazadas">Rechazadas</option>
-            <option value="Finalizadas">Finalizadas</option>
+            <option value="Confirmada">Confirmadas</option>
+            <option value="Rechazada">Rechazadas</option>
+            <option value="Finalizada">Finalizadas</option>
           </select>
         </div>
 

@@ -21,6 +21,7 @@ router.get("/get-reservation", async (req, res) => {
       r.duration,
       r.participants,
       r.status,
+      r.repetitive,
       r.user_id,
       u.name AS nombre_usuario
     FROM 
@@ -54,7 +55,10 @@ router.post("/register-reservation", async (req, res) => {
     participants,
     status,
     cedula_user,
+    repetitive,
   } = req.body;
+
+  const repetitives = repetitive === "true" ? 1 : 0;
 
   try {
     const sql1 = `SELECT * FROM meeting.user WHERE cedula = ?`;
@@ -69,11 +73,11 @@ router.post("/register-reservation", async (req, res) => {
     const user_email = user.email;
     const user_name = user.name;
 
-    const sql2 = `INSERT INTO meeting.reservation (reason, date, timeStart, timeEnd, duration, participants, status, user_id)
-    VALUES (?,?,?,?,?,?,?,?)
+    const sql2 = `INSERT INTO meeting.reservation (reason, date, timeStart, timeEnd, duration, participants, status, repetitive, user_id)
+    VALUES (?,?,?,?,?,?,?,?,?)
     `;
 
-    const [result2] = await pool.query(sql2, [
+    await pool.query(sql2, [
       reason,
       date,
       timeStart,
@@ -81,6 +85,7 @@ router.post("/register-reservation", async (req, res) => {
       duration,
       participants,
       status,
+      repetitives,
       user_id,
     ]);
 
@@ -125,7 +130,7 @@ Ofician de Sistemas`,
 
     res.status(200).json({
       message: "Reservation registered successfully",
-      success: true
+      success: true,
     });
   } catch (error) {
     console.error(error);
@@ -145,6 +150,7 @@ router.get("/get-reservation-by-date/:date", async (req, res) => {
       r.duration,
       r.participants,
       r.status,
+      r.repetitive,
       r.user_id,
       u.name AS nombre_usuario
     FROM 
@@ -163,7 +169,12 @@ router.get("/get-reservation-by-date/:date", async (req, res) => {
       return;
     }
 
-    res.json(result);
+     const formatted = result.map((item) => ({
+      ...item,
+      repetitive: Boolean(item.repetitive),
+    }));
+
+    res.json(formatted);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -182,6 +193,7 @@ router.get("/get-reservation-by-id/:id", async (req, res) => {
       r.duration,
       r.participants,
       r.status,
+      r.repetitive,
       r.user_id,
       u.name AS nombre_usuario,
       u.cedula AS cedula_user
@@ -369,7 +381,7 @@ router.post("/notify-admin-reservation-pending/:id", async (req, res) => {
     const fechaFormateada = new Date(date).toLocaleDateString("es-CO", {
       weekday: "long",
       year: "numeric",
-      month: "long", 
+      month: "long",
       day: "numeric",
     });
 

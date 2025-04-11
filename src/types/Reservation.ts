@@ -10,4 +10,5 @@ export interface Reservation {
   user_id: number;
   cedula_user: string;
   nombre_usuario: string;
+  repetitive: false,
 }
