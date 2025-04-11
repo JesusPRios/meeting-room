@@ -113,7 +113,7 @@ export const useReservation = () => {
             fechaInicio.getTime() - ahora.getTime();
           const diferenciaEnSegundos = diferenciaEnMilisegundos / 1000;
 
-          const margen = 30; 
+          const margen = 30;
           const unaHoraEnSegundos = 3600;
 
           if (
@@ -221,10 +221,9 @@ export const useReservation = () => {
         updated.duration = calcularDuracion(value, updated.timeEnd);
       }
 
+      e.target.blur();
       return updated;
     });
-
-    e.target.blur(); 
   };
 
   const handleTimeEndChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -240,10 +239,9 @@ export const useReservation = () => {
         updated.duration = calcularDuracion(updated.timeStart, value);
       }
 
+      e.target.blur();
       return updated;
     });
-
-    e.target.blur(); 
   };
 
   const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -348,7 +346,7 @@ export const useReservation = () => {
       timeEnd: reser.timeEnd,
       reason: reser.reason,
       date: reser.date.toISOString().split("T")[0],
-      duration: duracionCalculada, 
+      duration: duracionCalculada,
       participants: reser.participants,
       cedula_user: reser.cedula_user,
       status: "Pendiente",
