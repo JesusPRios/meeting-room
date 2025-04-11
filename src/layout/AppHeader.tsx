@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSidebar } from "../context/SidebarContext";
-import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
 import UserDropdown from "../components/header/UserDropdown";
 import Cookies from "js-cookie";
-import logo from "../../public/images/logo.jpg";
+import logo from "../icons/logo.jpg";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
@@ -78,12 +77,11 @@ const AppHeader: React.FC = () => {
                 />
               </svg>
             )}
-            {/* Cross Icon */}
           </button>
           {role === "admin" ? (
             <button
               onClick={toggleApplicationMenu}
-              className="flex items-center justify-center w-10 h-10 text-gray-700 rounded-lg z-99999 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 lg:hidden"
+              className="flex items-center justify-center w-10 h-10 text-gray-700 rounded-lg z-99999 hover:bg-white lg:hidden"
             >
               <svg
                 width="24"
@@ -101,7 +99,7 @@ const AppHeader: React.FC = () => {
               </svg>
             </button>
           ) : (
-            <div></div>
+            null
           )}
         </div>
         <div
@@ -109,11 +107,15 @@ const AppHeader: React.FC = () => {
             isApplicationMenuOpen ? "flex" : "hidden"
           } items-center justify-between w-full gap-4 px-5 py-4 lg:flex shadow-theme-md lg:justify-end lg:px-0 lg:shadow-none`}
         >
-          <div className="flex items-center gap-2">
-            <h1 className="text-[15px] font-semibold text-white">
-              Meeting Room
-            </h1>
-            <img src={logo} alt="logo" className="w-10 h-10 rounded-full" />
+          <div className="flex items-center gap-2 h-8">
+            {role === "admin" ? null : (
+              <>
+                <h1 className="text-[15px] font-semibold text-white">
+                  Meeting Room
+                </h1>
+                <img src={logo} alt="logo" className="w-10 h-10 rounded-full" />
+              </>
+            )}
           </div>
           {role === "admin" ? (
             <>
@@ -121,6 +123,7 @@ const AppHeader: React.FC = () => {
                 <ThemeToggleButton />
               </div> */}
               <UserDropdown />
+              <img src={logo} alt="logo" className="w-10 h-10 rounded-full" />
             </>
           ) : (
             <div className="h-10" />
