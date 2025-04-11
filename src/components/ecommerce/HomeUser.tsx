@@ -136,9 +136,9 @@ export default function HomeUser() {
                             {item.repetitive && (
                               <a
                                 href={`/repetitive-reservations/${item.id}`}
-                                className="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-blue-700 transition"
+                                className="bg-[#39A900] text-white px-3 py-2 rounded-full text-xs transition"
                               >
-                                Ver más
+                                R
                               </a>
                             )}
                           </TableCell>
