@@ -10,7 +10,7 @@ export default function EditSQ() {
 
   return (
     <>
-      <PageBreadcrumb pageTitle="Consulta de Reservaciones" />
+      <PageBreadcrumb pageTitle="Consulta de reservaciones" />
       <ComponentCard title="📋 Historial de Reservaciones">
         <div className="flex items-center gap-4 mb-4">
           <label className="text-sm font-medium whitespace-nowrap">
@@ -22,9 +22,9 @@ export default function EditSQ() {
             onChange={handleEstadoChange}
           >
             <option value="">Seleccione un estado</option>
-            <option value="confirmadas">Confirmadas</option>
-            <option value="rechazada">Rechazadas</option>
-            <option value="finalizada">Finalizadas</option>
+            <option value="Confirmadas">Confirmadas</option>
+            <option value="Rechazadas">Rechazadas</option>
+            <option value="Finalizadas">Finalizadas</option>
           </select>
         </div>
 
@@ -57,8 +57,8 @@ export default function EditSQ() {
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500 text-sm">
-            No hay reservaciones con estado {selectedEstado}.
+          <p className="text-gray-700 text-sm">
+            No hay reservaciones con estado: <span className="bg-[#39A900] p-2 rounded-md text-white">{selectedEstado}</span>
           </p>
         )}
       </ComponentCard>
