@@ -1,9 +1,9 @@
-import EcommerceMetrics from "../../components/ecommerce/EcommerceMetrics";
+import HomeUser from "../../components/ecommerce/HomeUser";
 
 export default function Ecommerce() {
   return (
     <>
-      <EcommerceMetrics />
+      <HomeUser />
     </>
   );
 }
