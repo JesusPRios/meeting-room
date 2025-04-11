@@ -8,7 +8,7 @@ const router = express.Router();
 router.use(cookieParser());
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 
 router.get("/get-reservation", async (req, res) => {
   const sql = `
