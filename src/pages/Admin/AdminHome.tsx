@@ -11,7 +11,7 @@ export default function AdminHome() {
 
   return (
     <>
-      <PageBreadcrumb pageTitle="ADMINISTRADOR - PÁGINA INICIAL" />
+      <PageBreadcrumb pageTitle="Listado de reservas pendientes" />
       <div className="space-y-6 text-sm">
         <ComponentCard title="🕒 Peticiones Recientes">
           {recientes.length > 0 ? (
@@ -28,7 +28,7 @@ export default function AdminHome() {
               ))}
             </ul>
           ) : (
-            <p className="text-gray-500 text-sm">No hay peticiones recientes.</p>
+            <p className="text-gray-700 text-[15px]">Ningún usuario ha realizado una reserva.</p>
           )}
         </ComponentCard>
 
