@@ -9,6 +9,7 @@ import SignIn from "./pages/AuthPages/SignIn";
 import ProtectedRoute from "./context/ProtectedRoute";
 import ReservationDetails from "./pages/Reservations/DetailsReservations";
 import ReservationQuery from "./pages/Reservations/GetReservationAdmin";
+import RepetitiveReservation from "./pages/Reservations/RepetitiveReservation";
 
 export default function App() {
   return (
@@ -39,10 +40,17 @@ export default function App() {
             }
           />
           <Route
+            path="/repetitive-reservations/:id"
+            element={<RepetitiveReservation />}
+          />
+          <Route
             path="/details-reservations/:id"
             element={<ReservationDetails />}
           />
-          <Route path="/get-reservation-by-id/:id" element={<ReservationQuery />} />
+          <Route
+            path="/get-reservation-by-id/:id"
+            element={<ReservationQuery />}
+          />
         </Route>
         <Route path="/signin" element={<SignIn />} />
 
