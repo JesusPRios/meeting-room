@@ -28,13 +28,13 @@ export const useReservation = () => {
   const [completas, setCompletas] = useState([]);
   const [rechazadas, setRechazadas] = useState([]);
   const [recientes, setRecientes] = useState([]);
-  const navigate = useNavigate();
   const [showCompletas, setShowCompletas] = useState(false);
   const [showRechazadas, setShowRechazadas] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedEstado, setSelectedEstado] = useState<string>("");
   const [cedulaInput, setCedulaInput] = useState("");
   const [sugerencias, setSugerencias] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const gestionarReservaciones = async () => {
@@ -288,6 +288,7 @@ export const useReservation = () => {
       if (data.error) {
         setInformation([]);
       } else {
+        setReser(data[0]);
         setInformation(data[0]);
       }
     } catch (error) {
@@ -311,7 +312,7 @@ export const useReservation = () => {
     const form = e.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
 
-    const repetitive = formData.get("repetitive"); //
+    const repetitive = formData.get("repetitive");
 
     const data = {
       timeStart: reser.timeStart,
@@ -325,8 +326,6 @@ export const useReservation = () => {
       repetitive: repetitive,
     };
 
-    console.log("Data to register:", data);
-
     try {
       const response = await axios.post(
         "http://localhost:3002/register-reservation",
@@ -339,10 +338,53 @@ export const useReservation = () => {
       );
 
       if (response.status === 200) {
+        alert("La reserva se ha registrado correctamente.");
         navigate("/admin/home");
       }
     } catch (error) {
       console.error("Error al registrar la reserva", error);
+    }
+  };
+
+  const updateDateReservation = async (e: React.FormEvent, id: number) => {
+    e.preventDefault();
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+
+    const duracionCalculada = calcularDuracion(reser.timeStart, reser.timeEnd);
+    const formattedDate = reser.date ? new Date(reser.date).toISOString().split("T")[0] : null;
+    const repetitive = formData.get("repetitive");
+
+    const data = {
+      timeStart: reser.timeStart,
+      timeEnd: reser.timeEnd,
+      reason: reser.reason,
+      date: formattedDate,
+      duration: duracionCalculada,
+      participants: reser.participants,
+      cedula_user: reser.cedula_user,
+      status: "Pendiente",
+      repetitive: repetitive,
+    };
+
+    try {
+      const response = await axios.put(
+        `http://localhost:3002/reschedule-reservation/${id}`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      
+      if (response.status === 200) {
+        alert("La reserva se ha actualizado correctamente.");
+        navigate("/home");
+      }
+    
+    } catch (error) {
+      console.error("Error al actualizar la reserva", error);
     }
   };
 
@@ -440,5 +482,6 @@ export const useReservation = () => {
     setCedulaInput,
     sugerencias,
     setSugerencias,
+    updateDateReservation
   };
 };
