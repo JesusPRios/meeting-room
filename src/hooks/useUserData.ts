@@ -22,7 +22,7 @@ export const useUserData = () => {
     navigate: (path: string) => void
   ) => {
     try {
-      const response = await axios.post("http://localhost:3002/login", {
+      const response = await axios.post("http://10.4.39.178:3002/login", {
         username,
         password,
       });
@@ -53,7 +53,7 @@ export const useUserData = () => {
 
   const getAdmins = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:3002/get-admins/${id}`); 
+      const response = await fetch(`http://10.4.39.178:3002/get-admins/${id}`); 
       const data = await response.json();
       return data.admin;
     } catch (err: any) {
