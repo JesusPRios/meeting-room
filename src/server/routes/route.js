@@ -42,9 +42,9 @@ router.get("/get-reservation", async (req, res) => {
     const [result] = await pool.query(sql);
 
     if (result.length === 0) {
-      res.status(200).json({ error: "No se encontró ninguna reservación" });
+      res.status(200).json([]); 
       return;
-    }
+    }    
 
     res.json(result);
   } catch (error) {
