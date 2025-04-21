@@ -42,9 +42,9 @@ router.get("/get-reservation", async (req, res) => {
     const [result] = await pool.query(sql);
 
     if (result.length === 0) {
-      res.status(200).json([]); 
+      res.status(200).json([]);
       return;
-    }    
+    }
 
     res.json(result);
   } catch (error) {
@@ -111,7 +111,7 @@ router.post("/register-reservation", async (req, res) => {
     - Motivo: ${reason}
     
     Por favor, ingrese a su cuenta para gestionar esta petición:
-    http://10.4.32.29:5173/signin
+    http://10.4.39.178:5173/signin
     
     Cordial saludo,
     Sistema de Reservaciones`,
@@ -133,7 +133,7 @@ Si tienes alguna pregunta o necesitas más información, no dudes en contactarno
 Gracias por tu comprensión y paciencia.
 
 Saludos cordiales,
-Ofician de Sistemas`,
+Oficina de Sistemas`,
     });
 
     res.status(200).json({
@@ -254,9 +254,12 @@ router.post("/accept-reservation/:id-:cedula", async (req, res) => {
     
     Nos complace informarte que tu solicitud de reserva para la sala de juntas ha sido aceptada y confirmada exitosamente.
     
-    Te agradecemos por seguir el procedimiento correspondiente y te recordamos respetar los horarios y condiciones establecidos para el uso del espacio. Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos a traves de el correo electronico: sistemascip@sena.edu.co
+    Te agradecemos por seguir el procedimiento correspondiente y te recordamos respetar los horarios y condiciones establecidos para el uso del espacio.
+    
+    Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos a través del correo electrónico: sistemascip@sena.edu.co
     
     Saludos cordiales,
+    
     Oficina de Sistemas`,
       priority: "high",
       headers: {
@@ -405,7 +408,7 @@ Se le informa que una reservación programada para el día ${capitalizada} está
 La reunión está agendada para comenzar a las ${timeStart}.
 
 Por favor, acceda a su cuenta para gestionar esta petición:
-http://10.4.32.29:5173/signin
+http://10.4.39.178:5173/signin
 
 Cordial saludo,
 Sistema de Reservaciones
@@ -493,7 +496,7 @@ router.put("/reschedule-reservation/:id", async (req, res) => {
     - Motivo: ${reason}
     
     Por favor, ingrese a su cuenta para gestionar esta petición:
-    http://10.4.32.29:5173/signin
+    http://10.4.39.178:5173/signin
     
     Cordial saludo,
     Sistema de Reservaciones`,
