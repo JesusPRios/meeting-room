@@ -44,6 +44,8 @@ export default function Content() {
     reservedRange &&
     isTimeOverlapping(reser.timeStart, reser.timeEnd);
 
+    const today = new Date();
+
   return (
     <ComponentCard
       title="Reserva para sala de conferencia"
@@ -71,6 +73,7 @@ export default function Content() {
               required
               type="date"
               name="date"
+              min={today.toISOString().split("T")[0]}
               autocomplete="off"
               onChange={handleDateChange}
             />
