@@ -169,7 +169,7 @@ router.get("/get-reservation-by-date/:date", async (req, res) => {
       return;
     }
 
-     const formatted = result.map((item) => ({
+    const formatted = result.map((item) => ({
       ...item,
       repetitive: Boolean(item.repetitive),
     }));
@@ -423,6 +423,77 @@ router.get("/search-users", async (req, res) => {
   } catch (error) {
     console.error("Error buscando usuarios por cédula:", error);
     res.status(500).json({ error: "Error en el servidor" });
+  }
+});
+
+router.put("/reschedule-reservation/:id", async (req, res) => {
+  const {
+    date,
+    timeStart,
+    timeEnd,
+    duration,
+    participants,
+    status,
+    cedula_user,
+    reason,
+    repetitive,
+  } = req.body;
+
+  const id = req.params.id;
+  const repetitives = repetitive === "true" ? 1 : 0;
+
+  try {
+    const sql1 = `SELECT * FROM meeting.user WHERE cedula = ?`;
+    const [result1] = await pool.query(sql1, [cedula_user]);
+
+    if (result1.length === 0) {
+      return res.status(200).json({ error: "No se encontro el usuario" });
+    }
+
+    const user = result1[0];
+    const user_id = user.id;
+    const user_name = user.name;
+
+    const sql = `UPDATE meeting.reservation SET date = ?, timeStart = ?, timeEnd = ?, duration = ?, participants = ?, status = ?, repetitive = ?, user_id = ? WHERE id = ?`;
+
+    await pool.query(sql, [
+      date,
+      timeStart,
+      timeEnd,
+      duration,
+      participants,
+      status,
+      repetitives,
+      user_id,
+      id,
+    ]);
+
+    await sendEmail({
+      to: "sistemascip@sena.edu.co",
+      subject: "Petición de Reservación",
+      text: `Estimado administrador,
+    
+    Se le informa que el usuario ${user_name} ha reajustado la reservación.
+    
+    Detalles de la reservación:
+    - Fecha: ${date}
+    - Hora de inicio: ${timeStart}
+    - Hora de finalización: ${timeEnd}
+    - Motivo: ${reason}
+    
+    Por favor, ingrese a su cuenta para gestionar esta petición:
+    http://10.4.32.29:5173/signin
+    
+    Cordial saludo,
+    Sistema de Reservaciones`,
+    });
+
+    res
+      .status(200)
+      .json({ success: true, message: "Reservation rescheduled successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
