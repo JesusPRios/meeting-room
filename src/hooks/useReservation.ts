@@ -35,6 +35,8 @@ export const useReservation = () => {
   const [selectedEstado, setSelectedEstado] = useState<string>("");
   const [cedulaInput, setCedulaInput] = useState("");
   const [sugerencias, setSugerencias] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -492,6 +494,10 @@ export const useReservation = () => {
     sugerencias,
     setSugerencias,
     updateDateReservation,
-    formatTimeTo12Hour
+    formatTimeTo12Hour,
+    loading,
+    setLoading,
+    successMessage,
+    setSuccessMessage,
   };
 };
