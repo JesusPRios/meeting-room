@@ -8,7 +8,15 @@ const router = express.Router();
 router.use(cookieParser());
 
 const storage = multer.memoryStorage();
-// const upload = multer({ storage: storage });
+const upload = multer({ storage: storage });
+
+function formatTimeTo12Hour(time24) {
+  const [hour, minute] = time24.split(":");
+  const hourNum = parseInt(hour, 10);
+  const ampm = hourNum >= 12 ? "PM" : "AM";
+  const hour12 = hourNum % 12 || 12;
+  return `${hour12}:${minute} ${ampm}`;
+}
 
 router.get("/get-reservation", async (req, res) => {
   const sql = `
@@ -468,6 +476,9 @@ router.put("/reschedule-reservation/:id", async (req, res) => {
       id,
     ]);
 
+    const formattedTimeStart = formatTimeTo12Hour(timeStart);
+    const formattedTimeEnd = formatTimeTo12Hour(timeEnd);
+
     await sendEmail({
       to: "sistemascip@sena.edu.co",
       subject: "Petición de Reservación",
@@ -477,8 +488,8 @@ router.put("/reschedule-reservation/:id", async (req, res) => {
     
     Detalles de la reservación:
     - Fecha: ${date}
-    - Hora de inicio: ${timeStart}
-    - Hora de finalización: ${timeEnd}
+    - Hora de inicio: ${formattedTimeStart}
+    - Hora de finalización: ${formattedTimeEnd}
     - Motivo: ${reason}
     
     Por favor, ingrese a su cuenta para gestionar esta petición:
