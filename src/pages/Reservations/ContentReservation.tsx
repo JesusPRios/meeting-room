@@ -23,6 +23,7 @@ export default function Content() {
     setSugerencias,
     loading,
     setLoading,
+    formatTimeTo12Hour,
   } = useReservation();
 
   const isTimeOverlapping = (start: string, end: string) => {
@@ -61,6 +62,9 @@ export default function Content() {
       setLoading(false);
     }
   };
+
+  const formatTimeStart = formatTimeTo12Hour(reser?.timeStart);
+  const formatTimeEnd = formatTimeTo12Hour(reser?.timeEnd);
 
   return (
     <ComponentCard
@@ -197,7 +201,7 @@ export default function Content() {
         {showTimeConflict && (
           <p className="text-red-600 font-semibold text-sm my-4 col-span-2">
             ⚠️ El rango de hora seleccionado se cruza con otra reserva (
-            {reservedRange?.start} - {reservedRange?.end}). Por favor, elige
+            {formatTimeStart} - {formatTimeEnd}). Por favor, elige otra hora.
             otra hora.
           </p>
         )}
