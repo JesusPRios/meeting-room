@@ -17,13 +17,14 @@ import Alert from "../../components/ui/alert/Alert";
 const ReservationDetails = () => {
   const { id } = useParams();
   const {
-    information,
+    reser,
     getReservationById,
     AcceptReservation,
     RejectReservation,
     setError,
     navigate,
     error,
+    formatTimeTo12Hour,
   } = useReservation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -31,7 +32,7 @@ const ReservationDetails = () => {
     if (id) getReservationById(Number(id));
   }, [id]);
 
-  if (!information) return <p className="text-gray-500">Cargando...</p>;
+  if (!reser) return <p className="text-gray-500">Cargando...</p>;
 
   const handleReject = async (id: number, cedula: string) => {
     setError(null);
@@ -65,9 +66,12 @@ const ReservationDetails = () => {
     }
   };
 
-  const participants = information.participants
+  const participants = reser.participants
     ?.split(",")
     .map((p) => p.trim());
+
+    const formattedTimeStart = formatTimeTo12Hour(reser.timeStart);
+    const formattedTimeEnd = formatTimeTo12Hour(reser.timeEnd);
 
   return (
     <>
@@ -95,29 +99,29 @@ const ReservationDetails = () => {
             <Info
               icon={IoDocumentText}
               label="Motivo"
-              value={information.reason}
+              value={reser.reason}
             />
           </div>
 
           <Info
             icon={IoCalendar}
             label="Fecha"
-            value={new Date(information.date).toLocaleDateString()}
+            value={new Date(reser.date).toLocaleDateString()}
           />
           <Info
             icon={IoTime}
             label="Hora"
-            value={`${information.timeStart} - ${information.timeEnd}`}
+            value={`${formattedTimeStart} - ${formattedTimeEnd}`}
           />
           <Info
             icon={IoHourglass}
             label="Duración"
-            value={information.duration}
+            value={reser.duration}
           />
           <Info
             icon={IoPerson}
             label="Solicitante"
-            value={information.nombre_usuario}
+            value={reser.nombre_usuario}
           />
 
           <div className="col-span-1 md:col-span-2 p-4 rounded-lg bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-sm">
@@ -143,7 +147,7 @@ const ReservationDetails = () => {
           <button
             className="bg-red-500 hover:bg-red-600 p-3 rounded-lg text-white text-sm"
             onClick={() =>
-              handleReject(information.id, information.cedula_user)
+              handleReject(reser.id, reser.cedula_user)
             }
           >
             Rechazar
@@ -151,7 +155,7 @@ const ReservationDetails = () => {
           <button
             className="bg-[#39A900] hover:bg-[#39A900] p-3 rounded-lg text-white text-sm"
             onClick={() =>
-              handleAccept(information.id, information.cedula_user)
+              handleAccept(reser.id, reser.cedula_user)
             }
           >
             Confirmar
