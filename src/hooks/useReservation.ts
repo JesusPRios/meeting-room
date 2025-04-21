@@ -301,6 +301,7 @@ export const useReservation = () => {
   };
 
   const registerReservation = async (e: React.FormEvent) => {
+    e.preventDefault();
     const duracionCalculada = calcularDuracion(reser.timeStart, reser.timeEnd);
 
     if (duracionCalculada === "0h 0m") {
@@ -327,7 +328,7 @@ export const useReservation = () => {
       repetitive: repetitive,
     };
 
-    console.log("Enviando reserva...", data);
+    // console.log("Enviando reserva...", data);
 
     try {
       const response = await axios.post(
