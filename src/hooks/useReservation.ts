@@ -20,6 +20,7 @@ export const useReservation = () => {
     participants: "",
     cedula_user: "",
     repetitive: "",
+    nombre_usuario: ""
   });
   const [reservedRange, setReservedRange] = useState<{
     start: string;
@@ -441,6 +442,14 @@ export const useReservation = () => {
     }
   };
 
+  function formatTimeTo12Hour(time24: any) {
+    const [hour, minute] = time24.split(":");
+    const hourNum = parseInt(hour, 10);
+    const ampm = hourNum >= 12 ? "PM" : "AM";
+    const hour12 = hourNum % 12 || 12;
+    return `${hour12}:${minute} ${ampm}`;
+  }
+
   return {
     reservation,
     getReservationByDate,
@@ -482,6 +491,7 @@ export const useReservation = () => {
     setCedulaInput,
     sugerencias,
     setSugerencias,
-    updateDateReservation
+    updateDateReservation,
+    formatTimeTo12Hour
   };
 };
