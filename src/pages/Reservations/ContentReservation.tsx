@@ -3,6 +3,7 @@ import Label from "../../components/form/Label";
 import Input from "../../components/form/input/InputField";
 import Button from "../../components/ui/button/Button";
 import { useReservation } from "../../hooks/useReservation";
+import GIF from "../../../public/g0R5-unscreen.gif";
 
 export default function Content() {
   const {
@@ -20,6 +21,8 @@ export default function Content() {
     setCedulaInput,
     sugerencias,
     setSugerencias,
+    loading,
+    setLoading,
   } = useReservation();
 
   const isTimeOverlapping = (start: string, end: string) => {
@@ -44,14 +47,27 @@ export default function Content() {
     reservedRange &&
     isTimeOverlapping(reser.timeStart, reser.timeEnd);
 
-    const today = new Date();
+  const today = new Date();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await registerReservation(e);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ComponentCard
       title="Reserva para sala de conferencia"
       desc="A continuación, encontrara el formulario correspondiente para registrar su reserva."
     >
-      <form onSubmit={registerReservation}>
+      <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2">
             <Label>Razón o motivo de la reunión</Label>
@@ -193,10 +209,15 @@ export default function Content() {
             disabled={showTimeConflict ? true : false}
             className="bg-[#39A900] hover:bg-[#39A900] w-full mt-3"
           >
-            Registrar
+            Reservar
           </Button>
         </div>
       </form>
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#39A900] bg-opacity-70">
+          <img src={GIF} alt="Cargando..." className="w-24 h-24" />
+        </div>
+      )}
     </ComponentCard>
   );
 }
