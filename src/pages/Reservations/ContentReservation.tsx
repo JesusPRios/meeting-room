@@ -51,7 +51,6 @@ export default function Content() {
   const today = new Date();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
     setLoading(true);
 
     try {
