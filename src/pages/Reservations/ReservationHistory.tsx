@@ -33,11 +33,10 @@ export default function EditSQ() {
             Seleccione un estado para ver el historial.
           </p>
         ) : filteredReservas.length > 0 ? (
-          <ul className="list-none pl-0 space-y-2">
-            {filteredReservas.map((r: any) => (
-              <ComponentCard title="Resultado de la busqueda">
-                <div className="text-[13px]">
-                  {" "}
+          <ComponentCard title="Resultado de la busqueda">
+            <ul className="list-none space-y-1">
+              {filteredReservas.map((r: any) => (
+                <div className="text-sm mt-[-5px]">
                   <li
                     key={r.id}
                     className="flex justify-between items-center text-gray-800 dark:text-white/80 border-b border-gray-100 dark:border-gray-700 py-1"
@@ -53,12 +52,15 @@ export default function EditSQ() {
                     </div>
                   </li>
                 </div>
-              </ComponentCard>
-            ))}
-          </ul>
+              ))}
+            </ul>
+          </ComponentCard>
         ) : (
           <p className="text-gray-700 text-sm">
-            No hay reservaciones con estado: <span className="bg-[#39A900] p-2 rounded-md text-white">{selectedEstado}</span>
+            No hay reservaciones con estado:{" "}
+            <span className="bg-[#39A900] p-2 rounded-md text-white">
+              {selectedEstado}
+            </span>
           </p>
         )}
       </ComponentCard>
