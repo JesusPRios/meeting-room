@@ -15,7 +15,7 @@ const navItems: NavItem[] = [
     path: "/home",
   },
   {
-    name: "Hacer reservación",
+    name: "Realizar reservación",
     icon: <img src={ListIcon} alt="List Icon" className="dark:invert" />,
     path: "/meeting-reservation",
   },
