@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 import { DayPicker } from "react-day-picker";
@@ -48,6 +49,12 @@ export default function HomeUser() {
     );
   }
 
+  const capitalizeWords = (str: any) => {
+    return str
+      .toLowerCase()
+      .replace(/\b\w/g, (char: any) => char.toUpperCase());
+  };
+
   return (
     <>
       <PageBreadcrumb pageTitle="Consulta General - Reservaciones" />
@@ -72,12 +79,12 @@ export default function HomeUser() {
             {selectedDate ? (
               <div>
                 {information && information.length > 0 ? (
-                  <Table className="border-separate border-spacing-y-2 mt-[-10px]">
+                  <Table className="border-separate mt-[-10px]">
                     <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                       <TableRow>
                         <TableCell
                           isHeader
-                          className="px-5 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
+                          className="px-2 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
                         >
                           Usuario
                         </TableCell>
@@ -113,9 +120,10 @@ export default function HomeUser() {
                           key={item.id}
                           className="border-b-2 border-gray-200"
                         >
-                          <TableCell className="sm:px-6 text-start text-gray-900 dark:text-white/90">
-                            {item.nombre_usuario}
+                          <TableCell className="px-2 text-start text-gray-900 dark:text-white/90">
+                            {capitalizeWords(item.nombre_usuario)}
                           </TableCell>
+
                           <TableCell className="sm:px-6 text-start text-gray-900 dark:text-white/90">
                             {formatTime(item.timeStart)}
                           </TableCell>
@@ -139,13 +147,12 @@ export default function HomeUser() {
                           <TableCell className="text-center">
                             {item.repetitive && (
                               <a
-                              href={`/repetitive-reservations/${item.id}`}
-                              className="inline-flex items-center justify-center bg-[#39A900] hover:bg-[#2f8a00] text-white rounded-full w-8 h-8 transition duration-200 ml-2"
-                              title="Reagendar"
-                            >
-                              <IoTimeOutline className="text-2xl" />
-                            </a>
-                            
+                                href={`/repetitive-reservations/${item.id}`}
+                                className="inline-flex items-center justify-center bg-[#39A900] hover:bg-[#2f8a00] text-white rounded-full w-8 h-8 transition duration-200 ml-2"
+                                title="Reagendar"
+                              >
+                                <IoTimeOutline className="text-2xl" />
+                              </a>
                             )}
                           </TableCell>
                         </TableRow>
