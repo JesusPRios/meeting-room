@@ -14,6 +14,7 @@ import {
 } from "../ui/table";
 import Cookies from "js-cookie";
 import { es } from "date-fns/locale";
+import { IoTimeOutline } from "react-icons/io5";
 
 export default function HomeUser() {
   const role = Cookies.get("role");
@@ -71,7 +72,7 @@ export default function HomeUser() {
             {selectedDate ? (
               <div>
                 {information && information.length > 0 ? (
-                 <Table className="border-separate border-spacing-y-2 mt-[-10px]">
+                  <Table className="border-separate border-spacing-y-2 mt-[-10px]">
                     <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                       <TableRow>
                         <TableCell
@@ -108,7 +109,10 @@ export default function HomeUser() {
 
                     <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-sm">
                       {information.map((item) => (
-                        <TableRow key={item.id} className="border-b-2 border-gray-200">
+                        <TableRow
+                          key={item.id}
+                          className="border-b-2 border-gray-200"
+                        >
                           <TableCell className="sm:px-6 text-start text-gray-900 dark:text-white/90">
                             {item.nombre_usuario}
                           </TableCell>
@@ -135,11 +139,13 @@ export default function HomeUser() {
                           <TableCell className="text-center">
                             {item.repetitive && (
                               <a
-                                href={`/repetitive-reservations/${item.id}`}
-                                className="bg-[#39A900] text-white px-3 py-2 rounded-full text-xs transition"
-                              >
-                                R
-                              </a>
+                              href={`/repetitive-reservations/${item.id}`}
+                              className="inline-flex items-center justify-center bg-[#39A900] hover:bg-[#2f8a00] text-white rounded-full w-8 h-8 transition duration-200 ml-2"
+                              title="Reagendar"
+                            >
+                              <IoTimeOutline className="text-2xl" />
+                            </a>
+                            
                             )}
                           </TableCell>
                         </TableRow>
@@ -153,7 +159,6 @@ export default function HomeUser() {
                 )}
               </div>
             ) : (
-
               <p className="text-[15px] text-gray-700">
                 Selecciona una fecha para ver las reservaciones
                 correspondientes.
