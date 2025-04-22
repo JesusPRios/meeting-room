@@ -475,12 +475,9 @@ export const useReservation = () => {
       .replace(/\b\w/g, (char: any) => char.toUpperCase());
   };
 
-  const totalPages = Math.ceil(information?.length / itemsPerPage) || 1;
-
   return {
     setCurrentPage,
     currentPage,
-    totalPages,
     itemsPerPage,
     reservation,
     getReservationByDate,
