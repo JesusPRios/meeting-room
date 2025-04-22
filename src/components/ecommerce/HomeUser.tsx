@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 import { DayPicker } from "react-day-picker";
@@ -18,7 +17,6 @@ import { es } from "date-fns/locale";
 import { IoTimeOutline } from "react-icons/io5";
 
 export default function HomeUser() {
-  const role = Cookies.get("role");
   const {
     selectedDate,
     setSelectedDate,
@@ -26,11 +24,18 @@ export default function HomeUser() {
     information,
     formattedDate,
     formatTime,
+    capitalizeWords,
+    setCurrentPage,
+    currentPage,
+    totalPages,
+    itemsPerPage,
   } = useReservation();
+  const role = Cookies.get("role");
 
   useEffect(() => {
     if (selectedDate) {
       getReservationByDate(selectedDate);
+      setCurrentPage(1);
     }
   }, [selectedDate]);
 
@@ -38,22 +43,18 @@ export default function HomeUser() {
     return (
       <div>
         Querido administrador, esta vista es solo para usuarios generales.
-        dirijase a{" "}
-        <a
-          href="/inventario-register"
-          className="text-[#39A900] hover:underline"
-        >
+        Diríjase a{" "}
+        <a href="/admin/home" className="text-[#39A900] hover:underline">
           la página principal.
         </a>
       </div>
     );
   }
 
-  const capitalizeWords = (str: any) => {
-    return str
-      .toLowerCase()
-      .replace(/\b\w/g, (char: any) => char.toUpperCase());
-  };
+  const paginatedData = information?.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <>
@@ -79,86 +80,110 @@ export default function HomeUser() {
             {selectedDate ? (
               <div>
                 {information && information.length > 0 ? (
-                  <Table className="border-separate mt-[-10px]">
-                    <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-                      <TableRow>
-                        <TableCell
-                          isHeader
-                          className="px-2 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
-                        >
-                          Usuario
-                        </TableCell>
-                        <TableCell
-                          isHeader
-                          className="px-5 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
-                        >
-                          Hora inicio
-                        </TableCell>
-                        <TableCell
-                          isHeader
-                          className="px-5 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
-                        >
-                          Hora fin
-                        </TableCell>
-                        <TableCell
-                          isHeader
-                          className="px-5 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
-                        >
-                          Estado
-                        </TableCell>
-                        {/* <TableCell
-                          isHeader
-                          className="px-5 py-3 font-semibold text-gray-500 text-center text-theme-sm dark:text-white"
-                        >
-                        </TableCell> */}
-                      </TableRow>
-                    </TableHeader>
-
-                    <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-sm">
-                      {information.map((item) => (
-                        <TableRow
-                          key={item.id}
-                          className="border-b-2 border-gray-200"
-                        >
-                          <TableCell className="px-2 text-start text-gray-900 dark:text-white/90">
-                            {capitalizeWords(item.nombre_usuario)}
-                          </TableCell>
-
-                          <TableCell className="sm:px-6 text-start text-gray-900 dark:text-white/90">
-                            {formatTime(item.timeStart)}
-                          </TableCell>
-                          <TableCell className="sm:px-6 text-start text-gray-900 dark:text-white/90">
-                            {formatTime(item.timeEnd)}
+                  <>
+                    <Table className="border-separate border-spacing-y-2 mt-[-20px]">
+                      <TableHeader>
+                        <TableRow>
+                          <TableCell
+                            isHeader
+                            className="px-2 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
+                          >
+                            Usuario
                           </TableCell>
                           <TableCell
-                            className={`px-4 py-1.5 text-sm font-semibold text-center rounded-full
-        ${
-          item.status === "Pendiente"
-            ? "bg-red-100 text-red-700"
-            : item.status === "Confirmada"
-            ? "bg-green-100 text-green-700"
-            : item.status === "Cancelada"
-            ? "bg-yellow-100 text-yellow-700"
-            : "bg-gray-200 text-gray-700"
-        }`}
+                            isHeader
+                            className="px-6 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
                           >
-                            {item.status}
+                            Hora inicio
                           </TableCell>
-                          <TableCell className="text-center">
-                            {item.repetitive && (
-                              <a
-                                href={`/repetitive-reservations/${item.id}`}
-                                className="inline-flex items-center justify-center bg-[#39A900] hover:bg-[#2f8a00] text-white rounded-full w-8 h-8 transition duration-200 ml-2"
-                                title="Reagendar"
-                              >
-                                <IoTimeOutline className="text-2xl" />
-                              </a>
-                            )}
+                          <TableCell
+                            isHeader
+                            className="px-6 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
+                          >
+                            Hora fin
                           </TableCell>
+                          <TableCell
+                            isHeader
+                            className="px-5 py-3 font-semibold text-gray-500 text-start text-theme-sm dark:text-white"
+                          >
+                            Estado
+                          </TableCell>
+                          {/* <TableCell isHeader className="px-5 py-3" /> */}
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+
+                      <TableBody className="text-sm">
+                        {paginatedData.map((item) => (
+                          <TableRow
+                          key={item.id}
+                          className="bg-white dark:bg-gray-800 shadow-sm rounded-md"
+                        >
+                        
+                            <TableCell className="px-2 text-start text-gray-900 dark:text-white/90">
+                              {capitalizeWords(item.nombre_usuario)}
+                            </TableCell>
+                            <TableCell className="px-6 text-start text-gray-900 dark:text-white/90">
+                              {formatTime(item.timeStart)}
+                            </TableCell>
+                            <TableCell className="px-6 text-start text-gray-900 dark:text-white/90">
+                              {formatTime(item.timeEnd)}
+                            </TableCell>
+                            <TableCell
+                              className={`px-4 py-1.5 text-sm font-semibold text-center rounded-full
+                                ${
+                                  item.status === "Pendiente"
+                                    ? "bg-red-100 text-red-700"
+                                    : item.status === "Confirmada"
+                                    ? "bg-green-100 text-green-700"
+                                    : item.status === "Cancelada"
+                                    ? "bg-yellow-100 text-yellow-700"
+                                    : "bg-gray-200 text-gray-700"
+                                }`}
+                            >
+                              {item.status}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              {item.repetitive && (
+                                <a
+                                  href={`/repetitive-reservations/${item.id}`}
+                                  className="inline-flex items-center justify-center bg-[#39A900] hover:bg-[#2f8a00] text-white rounded-full w-8 h-8 transition duration-200 ml-2"
+                                  title="Reagendar"
+                                >
+                                  <IoTimeOutline className="text-2xl" />
+                                </a>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+
+                    <div className="mt-6 flex justify-center space-x-2 text-sm">
+                      <button
+                        onClick={() =>
+                          setCurrentPage((prev) => Math.max(prev - 1, 1))
+                        }
+                        disabled={currentPage === 1}
+                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                      >
+                        Anterior
+                      </button>
+                      <span className="px-2 py-1 text-sm">
+                        Página {currentPage} de {totalPages}
+                      </span>
+                      <button
+                        onClick={() =>
+                          setCurrentPage((prev) =>
+                            Math.min(prev + 1, totalPages)
+                          )
+                        }
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                      >
+                        Siguiente
+                      </button>
+                    </div>
+                  </>
                 ) : (
                   <p className="text-[15px] text-gray-700">
                     No hay reservas registradas para esta fecha.
