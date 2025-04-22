@@ -120,8 +120,7 @@ export default function ReportReservation() {
   return (
     <ComponentCard title="Reportes de Reservas" className="w-full">
       <div className="p-3 space-y-12">
-        {/* Usuarios con más reservas */}
-        <div >
+        <div>
           <h2 className="text-xl font-semibold mb-4">
             Raiting de usuarios
           </h2>
@@ -142,6 +141,7 @@ export default function ReportReservation() {
             ))}
           </ul>
         </div>
+        
         <div className="flex-1 min-w-[300px] max-w-[600px]">
           <h2 className="text-md font-semibold mb-4">
             📅 Peticiones mensuales por estado
