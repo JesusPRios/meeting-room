@@ -47,6 +47,8 @@ export default function ReportReservation() {
       const month = date.toLocaleString("default", {
         month: "short",
         year: "numeric",
+        weekday: "long",
+        day: "numeric",
       });
       if (!result[month]) result[month] = {};
       result[month][r.status] = (result[month][r.status] || 0) + 1;
@@ -65,65 +67,102 @@ export default function ReportReservation() {
       data: monthlyLabels.map((month) => monthlyStats[month][estado] || 0),
     })),
   };
+  
+  const chartOptions = {
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context: any) {
+            const label = context.dataset.label || "";
+            const value = context.parsed.y;
+            const index = context.dataIndex;
+            const month = monthlyLabels[index];
+  
+            // Esta parte busca los usuarios con ese estado en ese mes
+            const matchingUsers = reservation
+              .filter((r) => {
+                const date = new Date(r.date);
+                const monthStr = date.toLocaleString("default", {
+                  month: "short",
+                  year: "numeric",
+                  weekday: "long",
+                  day: "numeric",
+                });
+                return (
+                  monthStr === month && r.status === label
+                );
+              })
+              .map((r) => capitalizeWords(r.nombre_usuario || "Desconocido"));
+  
+            const uniqueUsers = [...new Set(matchingUsers)];
+  
+            return `${label}: ${value} \nResponsable: ${uniqueUsers.join(", ")}`;
+          },
+        },
+      },
+    },
+  };
+  
 
   const topUsers = useMemo(() => {
     const counts: Record<string, number> = {};
+
+    // Cuenta cuántas veces aparece cada usuario
     reservation.forEach((r: any) => {
       const user = r.nombre_usuario || "Desconocido";
-      const userCapitalized = capitalizeWords(user);
+      const userCapitalized = capitalizeWords(user); // Si tienes una función que capitaliza nombres
       counts[userCapitalized] = (counts[userCapitalized] || 0) + 1;
     });
 
+    // Convierte el objeto en array y ordena de mayor a menor cantidad de reservas
     return Object.entries(counts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5);
+      .sort((a, b) => b[1] - a[1]) // Orden descendente por número de reservas
+      .slice(0, 5); // Toma solo los 5 primeros
   }, [reservation]);
 
-//   const userData = {
-//     labels: topUsers.map(([user]) => user),
-//     datasets: [
-//       {
-//         label: "Reservas",
-//         data: topUsers.map(([, count]) => count),
-//         backgroundColor: [
-//           "#a5b4fc",
-//           "#f9a8d4",
-//           "#6ee7b7",
-//           "#fcd34d",
-//           "#f87171",
-//         ],
-//       },
-//     ],
-//   };
+  //   const userData = {
+  //     labels: topUsers.map(([user]) => user),
+  //     datasets: [
+  //       {
+  //         label: "Reservas",
+  //         data: topUsers.map(([, count]) => count),
+  //         backgroundColor: [
+  //           "#a5b4fc",
+  //           "#f9a8d4",
+  //           "#6ee7b7",
+  //           "#fcd34d",
+  //           "#f87171",
+  //         ],
+  //       },
+  //     ],
+  //   };
 
-//   const ratingStats = [1, 2, 3, 4, 5].map(
-//     (r) => reservation.filter((res) => res.rating === r).length
-//   );
+  //   const ratingStats = [1, 2, 3, 4, 5].map(
+  //     (r) => reservation.filter((res) => res.rating === r).length
+  //   );
 
-//   const ratingData = {
-//     labels: ["1 ⭐", "2 ⭐", "3 ⭐", "4 ⭐", "5 ⭐"],
-//     datasets: [
-//       {
-//         label: "Votos",
-//         data: ratingStats,
-//         backgroundColor: [
-//           "#f87171",
-//           "#fbbf24",
-//           "#facc15",
-//           "#4ade80",
-//           "#22d3ee",
-//         ],
-//       },
-//     ],
-//   };
+  //   const ratingData = {
+  //     labels: ["1 ⭐", "2 ⭐", "3 ⭐", "4 ⭐", "5 ⭐"],
+  //     datasets: [
+  //       {
+  //         label: "Votos",
+  //         data: ratingStats,
+  //         backgroundColor: [
+  //           "#f87171",
+  //           "#fbbf24",
+  //           "#facc15",
+  //           "#4ade80",
+  //           "#22d3ee",
+  //         ],
+  //       },
+  //     ],
+  //   };
 
   return (
     <ComponentCard title="Reportes de Reservas" className="w-full">
       <div className="p-3 space-y-12">
         <div>
-          <h2 className="text-xl font-semibold mb-4">
-            Raiting de usuarios
-          </h2>
+          <h2 className="text-xl font-semibold mb-4">Raiting de usuarios</h2>
           <ul className="space-y-3">
             {topUsers.map(([user, count], index) => (
               <li
@@ -141,12 +180,12 @@ export default function ReportReservation() {
             ))}
           </ul>
         </div>
-        
-        <div className="flex-1 min-w-[300px] max-w-[600px]">
+
+        <div className="">
           <h2 className="text-md font-semibold mb-4">
             📅 Peticiones mensuales por estado
           </h2>
-          <Bar data={monthlyData} />
+          <Bar data={monthlyData} options={chartOptions} />
         </div>
 
         {/* Gráfico 3: Opiniones sobre la App */}
