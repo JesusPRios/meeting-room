@@ -16,7 +16,7 @@ function formatTimeTo12Hour(time24) {
   const ampm = hourNum >= 12 ? "PM" : "AM";
   const hour12 = hourNum % 12 || 12;
   return `${hour12}:${minute} ${ampm}`;
-} 
+}
 
 router.get("/get-reservation", async (req, res) => {
   const sql = `
@@ -360,12 +360,31 @@ router.get("/get-admins/:id", async (req, res) => {
 });
 
 router.put("/update-reservation/:id", async (req, res) => {
-  const { status } = req.body;
+  const { status, fecha, timeEnd } = req.body;
   const id = req.params.id;
 
   try {
     const sql = `UPDATE meeting.reservation SET status = ? WHERE id = ?`;
     await pool.query(sql, [status, id]);
+
+    const formattedTimeEnd = formatTimeTo12Hour(timeEnd);
+    const fechaFormateada = new Date(fecha).toLocaleDateString("es-CO", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }); 
+    
+    await sendEmail({
+      to: "sistemascip@sena.edu.co",
+      subject: "Petición de Reservación",
+      text: `Estimado administrador,
+    
+    Se le informa que la reservación programada para el día ${fechaFormateada} ha finalizado a las ${formattedTimeEnd}.
+    
+    Cordial saludo,
+    Sistema de Reservaciones`,
+    });
 
     res
       .status(200)
