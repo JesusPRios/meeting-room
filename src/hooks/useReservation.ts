@@ -57,8 +57,12 @@ export const useReservation = () => {
             if (finReserva < ahora && reserva.status !== "Finalizada") {
               await axios.put(
                 `http://10.4.39.178:3002/update-reservation/${reserva.id}`,
-                { status: "Finalizada" }
-              );
+                {
+                  status: "Finalizada",
+                  fecha: reserva.date,
+                  timeEnd: reserva.timeEnd 
+                }
+              );              
               return { ...reserva, status: "Finalizada" };
             }
             return reserva;
