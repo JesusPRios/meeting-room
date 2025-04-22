@@ -24,29 +24,30 @@ export default function Content() {
     loading,
     setLoading,
     formatTimeTo12Hour,
+    information,
   } = useReservation();
 
-  const isTimeOverlapping = (start: string, end: string) => {
-    if (!reservedRange) return false;
+  const isTimeOverlappingAny = (start: string, end: string) => {
+    return information.some((item) => {
+      const toMinutes = (t: string) => {
+        const [h, m] = t.split(":").map(Number);
+        return h * 60 + m;
+      };
 
-    const toMinutes = (t: string) => {
-      const [h, m] = t.split(":").map(Number);
-      return h * 60 + m;
-    };
+      const startMin = toMinutes(start);
+      const endMin = toMinutes(end);
+      const resStart = toMinutes(item.timeStart);
+      const resEnd = toMinutes(item.timeEnd);
 
-    const startMin = toMinutes(start);
-    const endMin = toMinutes(end);
-    const resStart = toMinutes(reservedRange.start);
-    const resEnd = toMinutes(reservedRange.end);
-
-    return !(endMin <= resStart || startMin >= resEnd);
+      return !(endMin <= resStart || startMin >= resEnd);
+    });
   };
 
-  const showTimeConflict =
+  const showConflict =
     reser?.timeStart &&
     reser?.timeEnd &&
-    reservedRange &&
-    isTimeOverlapping(reser.timeStart, reser.timeEnd);
+    information.length > 0 &&
+    isTimeOverlappingAny(reser.timeStart, reser.timeEnd);
 
   const today = new Date();
 
@@ -64,6 +65,13 @@ export default function Content() {
 
   const formatTimeStart = formatTimeTo12Hour(reser?.timeStart);
   const formatTimeEnd = formatTimeTo12Hour(reser?.timeEnd);
+  const formatReservedStart = reservedRange?.start
+    ? formatTimeTo12Hour(reservedRange.start)
+    : "";
+
+  const formatReservedEnd = reservedRange?.end
+    ? formatTimeTo12Hour(reservedRange.end)
+    : "";
 
   return (
     <ComponentCard
@@ -197,11 +205,12 @@ export default function Content() {
           </div>
         </div>
 
-        {showTimeConflict && (
+        {showConflict && (
           <p className="text-red-600 font-semibold text-sm my-4 col-span-2">
-            ⚠️ El rango de hora seleccionado se cruza con otra reserva (
-            {formatTimeStart} - {formatTimeEnd}). Por favor, elige otra hora.
-            otra hora.
+            ⚠️ El rango de hora seleccionado ({formatTimeStart} -{" "}
+            {formatTimeEnd}) se superpone con otra reserva existente (
+            {formatReservedStart} - {formatReservedEnd}). Por favor, elige un
+            rango de horas diferente.
           </p>
         )}
 
@@ -209,7 +218,7 @@ export default function Content() {
           <Button
             size="sm"
             type="submit"
-            disabled={showTimeConflict ? true : false}
+            disabled={showConflict ? true : false}
             className="bg-[#39A900] hover:bg-[#39A900] w-full mt-3"
           >
             Reservar
