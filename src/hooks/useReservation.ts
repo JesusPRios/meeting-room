@@ -20,7 +20,7 @@ export const useReservation = () => {
     participants: "",
     cedula_user: "",
     repetitive: "",
-    nombre_usuario: ""
+    nombre_usuario: "",
   });
   const [reservedRange, setReservedRange] = useState<{
     start: string;
@@ -29,6 +29,7 @@ export const useReservation = () => {
   const [completas, setCompletas] = useState([]);
   const [rechazadas, setRechazadas] = useState([]);
   const [recientes, setRecientes] = useState([]);
+  const [finalizada, setFinalizadas] = useState([]);
   const [showCompletas, setShowCompletas] = useState(false);
   const [showRechazadas, setShowRechazadas] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +38,8 @@ export const useReservation = () => {
   const [sugerencias, setSugerencias] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,7 +52,8 @@ export const useReservation = () => {
         // 1. Actualizamos estados a "Finalizada" si ya pasó la hora
         const actualizadas = await Promise.all(
           data.map(async (reserva: any) => {
-            const finReserva = new Date(`${reserva.date}T${reserva.timeEnd}`);
+            const fechaISO = new Date(reserva.date).toISOString().split("T")[0];
+            const finReserva = new Date(`${fechaISO}T${reserva.timeEnd}`);
             if (finReserva < ahora && reserva.status !== "Finalizada") {
               await axios.put(
                 `http://10.4.39.178:3002/update-reservation/${reserva.id}`,
@@ -71,6 +75,7 @@ export const useReservation = () => {
 
         const confirmadas = data.filter((r: any) => r.status === "Confirmada");
         const rechazadas = data.filter((r: any) => r.status === "Rechazada");
+        const finalizadas = data.filter((r: any) => r.status === "Finalizada");
 
         // 3. Notificamos si hay alguna reunión pendiente dentro de 1h ± margen
         pendientes.forEach((reserva: any) => {
@@ -80,8 +85,8 @@ export const useReservation = () => {
 
           const diferenciaSegundos =
             (fechaInicio.getTime() - ahora.getTime()) / 1000;
-          const margen = 30; 
-          const unaHora = 3600; 
+          const margen = 30;
+          const unaHora = 3600;
 
           if (
             diferenciaSegundos >= unaHora - margen &&
@@ -95,6 +100,7 @@ export const useReservation = () => {
         setRecientes(pendientes);
         setCompletas(confirmadas);
         setRechazadas(rechazadas);
+        setFinalizadas(finalizadas);
       } catch (error) {
         console.error("Error al gestionar reservaciones:", error);
       }
@@ -155,6 +161,7 @@ export const useReservation = () => {
   const getFilteredReservaciones = () => {
     if (selectedEstado === "Confirmada") return completas;
     if (selectedEstado === "Rechazada") return rechazadas;
+    if (selectedEstado === "Finalizada") return finalizada;
     return [];
   };
 
@@ -356,7 +363,9 @@ export const useReservation = () => {
     const formData = new FormData(form);
 
     const duracionCalculada = calcularDuracion(reser.timeStart, reser.timeEnd);
-    const formattedDate = reser.date ? new Date(reser.date).toISOString().split("T")[0] : null;
+    const formattedDate = reser.date
+      ? new Date(reser.date).toISOString().split("T")[0]
+      : null;
     const repetitive = formData.get("repetitive");
 
     const data = {
@@ -381,12 +390,11 @@ export const useReservation = () => {
           },
         }
       );
-      
+
       if (response.status === 200) {
         alert("La reserva se ha actualizado correctamente.");
         navigate("/home");
       }
-    
     } catch (error) {
       console.error("Error al actualizar la reserva", error);
     }
@@ -453,7 +461,23 @@ export const useReservation = () => {
     return `${hour12}:${minute} ${ampm}`;
   }
 
+  function capitalizeFirstLetter(str: any) {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  }
+
+  const capitalizeWords = (str: any) => {
+    return str
+      .toLowerCase()
+      .replace(/\b\w/g, (char: any) => char.toUpperCase());
+  };
+
+  const totalPages = Math.ceil(information?.length / itemsPerPage) || 1;
+
   return {
+    setCurrentPage,
+    currentPage,
+    totalPages,
+    itemsPerPage,
     reservation,
     getReservationByDate,
     selectedDate,
@@ -500,5 +524,7 @@ export const useReservation = () => {
     setLoading,
     successMessage,
     setSuccessMessage,
+    capitalizeFirstLetter,
+    capitalizeWords,
   };
 };
