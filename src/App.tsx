@@ -10,6 +10,7 @@ import ProtectedRoute from "./context/ProtectedRoute";
 import ReservationDetails from "./pages/Reservations/DetailsReservations";
 import ReservationQuery from "./pages/Reservations/GetReservationAdmin";
 import RepetitiveReservation from "./pages/Reservations/RepetitiveReservation";
+import ReportReservation from "./pages/Reservations/ReportReservation";
 
 export default function App() {
   return (
@@ -50,6 +51,10 @@ export default function App() {
           <Route
             path="/get-reservation-by-id/:id"
             element={<ReservationQuery />}
+          />
+          <Route
+            path="/report-reservations"
+            element={<ReportReservation />}
           />
         </Route>
         <Route path="/signin" element={<SignIn />} />
