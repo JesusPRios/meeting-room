@@ -27,7 +27,6 @@ export default function HomeUser() {
     capitalizeWords,
     setCurrentPage,
     currentPage,
-    totalPages,
     itemsPerPage,
   } = useReservation();
   const role = Cookies.get("role");
@@ -50,6 +49,8 @@ export default function HomeUser() {
       </div>
     );
   }
+
+  const totalPages = Math.ceil(information?.length / itemsPerPage) || 1;
 
   const paginatedData = information?.slice(
     (currentPage - 1) * itemsPerPage,
