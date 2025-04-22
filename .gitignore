@@ -28,3 +28,5 @@ yarn-lock.json
 pnpm-lock.json
 .env
 .vscode
+
+.tasks.txt
