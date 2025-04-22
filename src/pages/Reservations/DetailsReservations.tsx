@@ -30,6 +30,7 @@ const ReservationDetails = () => {
     setLoading,
     setSuccessMessage,
     successMessage,
+    capitalizeFirstLetter,
   } = useReservation();
 
   useEffect(() => {
@@ -72,7 +73,9 @@ const ReservationDetails = () => {
     }
   };
 
-  const participants = reser.participants?.split(",").map((p) => p.trim());
+  const participants = reser.participants
+  ?.split(/,|\sy\s/)
+  .map((p) => capitalizeFirstLetter(p.trim())); 
   const formattedTimeStart = formatTimeTo12Hour(reser.timeStart);
   const formattedTimeEnd = formatTimeTo12Hour(reser.timeEnd);
 
