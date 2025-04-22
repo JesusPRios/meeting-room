@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Chart as ChartJS,
@@ -8,10 +9,11 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
-import { Bar, Pie } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import ComponentCard from "../../components/common/ComponentCard";
+import { useReservation } from "../../hooks/useReservation";
 
 ChartJS.register(
   BarElement,
@@ -24,6 +26,7 @@ ChartJS.register(
 
 export default function ReportReservation() {
   const [reservation, setReservation] = useState<any[]>([]);
+  const { capitalizeWords } = useReservation();
 
   useEffect(() => {
     const fetchReservations = async () => {
@@ -37,7 +40,6 @@ export default function ReportReservation() {
     fetchReservations();
   }, []);
 
-  // 📆 Gráfico 1: Peticiones mensuales por estado
   const monthlyStats = useMemo(() => {
     const result: Record<string, Record<string, number>> = {};
     reservation.forEach((r: any) => {
@@ -64,12 +66,12 @@ export default function ReportReservation() {
     })),
   };
 
-  // 👤 Gráfico 2: Usuarios con más reservas
   const topUsers = useMemo(() => {
     const counts: Record<string, number> = {};
     reservation.forEach((r: any) => {
       const user = r.nombre_usuario || "Desconocido";
-      counts[user] = (counts[user] || 0) + 1;
+      const userCapitalized = capitalizeWords(user);
+      counts[userCapitalized] = (counts[userCapitalized] || 0) + 1;
     });
 
     return Object.entries(counts)
@@ -77,74 +79,81 @@ export default function ReportReservation() {
       .slice(0, 5);
   }, [reservation]);
 
-  const userData = {
-    labels: topUsers.map(([user]) => user),
-    datasets: [
-      {
-        label: "Reservas",
-        data: topUsers.map(([, count]) => count),
-        backgroundColor: [
-          "#a5b4fc",
-          "#f9a8d4",
-          "#6ee7b7",
-          "#fcd34d",
-          "#f87171",
-        ],
-      },
-    ],
-  };
+//   const userData = {
+//     labels: topUsers.map(([user]) => user),
+//     datasets: [
+//       {
+//         label: "Reservas",
+//         data: topUsers.map(([, count]) => count),
+//         backgroundColor: [
+//           "#a5b4fc",
+//           "#f9a8d4",
+//           "#6ee7b7",
+//           "#fcd34d",
+//           "#f87171",
+//         ],
+//       },
+//     ],
+//   };
 
-  // ⭐ Gráfico 3: Opiniones de la App (si hay campo `rating`)
-  const ratingStats = [1, 2, 3, 4, 5].map(
-    (r) => reservation.filter((res) => res.rating === r).length
-  );
+//   const ratingStats = [1, 2, 3, 4, 5].map(
+//     (r) => reservation.filter((res) => res.rating === r).length
+//   );
 
-  const ratingData = {
-    labels: ["1 ⭐", "2 ⭐", "3 ⭐", "4 ⭐", "5 ⭐"],
-    datasets: [
-      {
-        label: "Votos",
-        data: ratingStats,
-        backgroundColor: [
-          "#f87171",
-          "#fbbf24",
-          "#facc15",
-          "#4ade80",
-          "#22d3ee",
-        ],
-      },
-    ],
-  };
+//   const ratingData = {
+//     labels: ["1 ⭐", "2 ⭐", "3 ⭐", "4 ⭐", "5 ⭐"],
+//     datasets: [
+//       {
+//         label: "Votos",
+//         data: ratingStats,
+//         backgroundColor: [
+//           "#f87171",
+//           "#fbbf24",
+//           "#facc15",
+//           "#4ade80",
+//           "#22d3ee",
+//         ],
+//       },
+//     ],
+//   };
 
   return (
     <ComponentCard title="Reportes de Reservas" className="w-full">
-      <div className="p-6 space-y-12">
-        <h1 className="text-2xl font-bold">📊 Reporte de Reservas</h1>
-
-        {/* Gráfico 1 y 2 juntos en una fila */}
-        <div className="flex flex-wrap gap-6">
-          {/* Gráfico 1: Peticiones mensuales */}
-          <div className="flex-1 min-w-[300px] max-w-[600px]">
-            <h2 className="text-md font-semibold mb-4">
-              📅 Peticiones mensuales por estado
-            </h2>
-            <Bar data={monthlyData} />
-          </div>
-
-          {/* Gráfico 2: Usuarios con más reservas */}
-          <div className="flex-1 min-w-[300px] max-w-[400px]">
-            <h2 className="text-xl font-semibold mb-4">
-              👥 Usuarios con más reservas
-            </h2>
-            <Pie data={userData} />
-          </div>
+      <div className="p-3 space-y-12">
+        {/* Usuarios con más reservas */}
+        <div >
+          <h2 className="text-xl font-semibold mb-4">
+            Raiting de usuarios
+          </h2>
+          <ul className="space-y-3">
+            {topUsers.map(([user, count], index) => (
+              <li
+                key={user}
+                className="flex justify-between items-center border-b pb-2"
+              >
+                <span className="font-medium text-sm">
+                  {index === 0 && "⭐ "}
+                  {user}
+                </span>
+                <span className="text-sm font-medium text-gray-800">
+                  {count} reserva(s) {index === 0}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="flex-1 min-w-[300px] max-w-[600px]">
+          <h2 className="text-md font-semibold mb-4">
+            📅 Peticiones mensuales por estado
+          </h2>
+          <Bar data={monthlyData} />
         </div>
 
         {/* Gráfico 3: Opiniones sobre la App */}
-        <div>
+        {/* <div>
           <h2 className="text-xl font-semibold mb-4">⭐ Opiniones de la app</h2>
           <Bar data={ratingData} />
-        </div>
+        </div> */}
       </div>
     </ComponentCard>
   );
