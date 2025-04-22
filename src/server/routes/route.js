@@ -16,7 +16,7 @@ function formatTimeTo12Hour(time24) {
   const ampm = hourNum >= 12 ? "PM" : "AM";
   const hour12 = hourNum % 12 || 12;
   return `${hour12}:${minute} ${ampm}`;
-}
+} 
 
 router.get("/get-reservation", async (req, res) => {
   const sql = `
@@ -151,7 +151,7 @@ router.get("/get-reservation-by-date/:date", async (req, res) => {
   const sql = `
     SELECT 
       r.id,
-      r.reason,
+      r.reason, 
       r.date,
       r.timeStart,
       r.timeEnd,
@@ -166,7 +166,8 @@ router.get("/get-reservation-by-date/:date", async (req, res) => {
     JOIN 
       meeting.user u ON r.user_id = u.id
     WHERE 
-      r.date = ?
+      r.date = ? AND
+      r.status != 'Rechazada'
   `;
 
   try {
@@ -359,12 +360,12 @@ router.get("/get-admins/:id", async (req, res) => {
 });
 
 router.put("/update-reservation/:id", async (req, res) => {
-  const { estado } = req.body;
+  const { status } = req.body;
   const id = req.params.id;
 
   try {
     const sql = `UPDATE meeting.reservation SET status = ? WHERE id = ?`;
-    await pool.query(sql, [estado, id]);
+    await pool.query(sql, [status, id]);
 
     res
       .status(200)
