@@ -180,6 +180,12 @@ export const useReservation = () => {
 
   const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedDate = new Date(e.target.value);
+    const day = selectedDate.getDay(); 
+    
+    if (day === 5 || day === 6) {
+      alert("No se permiten reservas los sábados ni domingos.");
+      return;
+    }
 
     setReser((prevInformation) => ({
       ...(prevInformation || {}),
@@ -189,8 +195,19 @@ export const useReservation = () => {
     await getReservationByDate(selectedDate);
   };
 
+  const isValidTime = (time: string) => {
+    const [hour, minute] = time.split(":").map(Number);
+    const total = hour * 60 + minute;
+    return (total >= 480 && total <= 720) || (total >= 840 && total <= 1020);
+  };  
+
   const handleTimeStartChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+
+    if (!isValidTime(value)) {
+      alert("Hora no permitida. Solo se puede reservar entre 08:00 a.m. – 12:00 p.m. y 02:00 p.m. – 05:00 p.m.");
+      return;
+    }  
 
     setReser((prevInformation) => {
       const updated = {
@@ -209,6 +226,11 @@ export const useReservation = () => {
 
   const handleTimeEndChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+
+    if (!isValidTime(value)) {
+      alert("Hora no permitida. Solo se puede reservar entre 08:00 a.m. – 12:00 p.m. y 02:00 p.m. – 05:00 p.m.");
+      return;
+    }
 
     setReser((prevInformation) => {
       const updated = {
