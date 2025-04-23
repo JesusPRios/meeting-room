@@ -5,8 +5,10 @@ import ChevronDownIcon from "../icons/chevron-down.svg";
 import GridIcon from "../icons/grid.svg";
 import ListIcon from "../icons/list.svg";
 import DocsIcon from "../icons/docs.svg";
+import FileIcon from "../icons/folder.svg";
 import { NavItem } from "../types/NavItem";
 import Cookies from "js-cookie";
+import { IoChatboxEllipsesOutline } from "react-icons/io5";
 
 const navItems: NavItem[] = [
   {
@@ -19,22 +21,17 @@ const navItems: NavItem[] = [
     icon: <img src={ListIcon} alt="List Icon" className="dark:invert" />,
     path: "/meeting-reservation",
   },
-  // {
-  //   icon: <img src={Login} alt="Fire Icon" className="dark:invert" />,
-  //   name: "Iniciar sesión",
-  //   path: "/signin",
-  // },
 ];
 
 const navItemsAdmin: NavItem[] = [
   {
-    name: "Inicio - Admin",
+    name: "Inicio",
     icon: <img src={GridIcon} alt="Table Icon" className="dark:invert" />,
     path: "/admin/home",
   },
   {
     name: "Historial de reservas",
-    icon: <img src={DocsIcon} alt="Table Icon" className="dark:invert" />,
+    icon: <img src={FileIcon} alt="Table Icon" className="dark:invert" />,
     path: "/reservations-history",
   },
   {
@@ -192,23 +189,18 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`py-8 flex ${
+        className={` flex ${
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link to="/home">
-          {isExpanded || isHovered || isMobileOpen ? (
-            <img
-              className="dark:hidden mt-[-60px] mb-[59px] ml-10"
-              src=""
-              alt="Logo"
-              width={150}
-              height={40}
-            />
-          ) : (
-            <img />
-          )}
-        </Link>
+        {isExpanded || isHovered || isMobileOpen ? (
+          <div className="flex items-center gap-2 mb-[65px] mt-5">
+            <IoChatboxEllipsesOutline className="text-white text-4xl" />
+            <h1 className="text-white text-3xl font-bold leading-tight">
+              ARS <span className="text-yellow-300">SENA</span>
+            </h1>
+          </div>
+        ) : null}
       </div>
       <div className="py-8">
         {(isExpanded || isHovered || isMobileOpen) && (
