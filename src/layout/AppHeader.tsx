@@ -99,7 +99,7 @@ const AppHeader: React.FC = () => {
               </svg>
             </button>
           ) : (
-            null
+            <div>{/* <h1>CENTRO PARA LA INDUSTRIA PETROQUIMICA</h1> */}</div>
           )}
         </div>
         <div
@@ -111,19 +111,15 @@ const AppHeader: React.FC = () => {
             {role === "admin" ? null : (
               <>
                 <h1 className="text-[15px] font-semibold text-white">
-                  Meeting Room
+                  CENTRO PARA LA INDUSTRIA PETROQUIMICA
                 </h1>
-                <img src={logo} alt="logo" className="w-10 h-10 rounded-full" />
+                <img src={logo} alt="logo" className="w-12 h-12 ml-2 mr-[-15px] rounded-full" />
               </>
             )}
           </div>
           {role === "admin" ? (
             <>
-              {/* <div className="flex items-center gap-2 2xsm:gap-3">
-                <ThemeToggleButton />
-              </div> */}
               <UserDropdown />
-              <img src={logo} alt="logo" className="w-10 h-10 rounded-full" />
             </>
           ) : (
             <div className="h-10" />
