@@ -40,69 +40,91 @@ export default function ReportReservation() {
     fetchReservations();
   }, []);
 
-  const monthlyStats = useMemo(() => {
-    const result: Record<string, Record<string, number>> = {};
-    reservation.forEach((r: any) => {
-      const date = new Date(r.date);
-      const month = date.toLocaleString("default", {
-        month: "short",
-        year: "numeric",
-        weekday: "long",
-        day: "numeric",
-      });
-      if (!result[month]) result[month] = {};
-      result[month][r.status] = (result[month][r.status] || 0) + 1;
-    });
-    return result;
-  }, [reservation]);
+  const next7Days = useMemo(() => {
+    const days = [];
+    const today = new Date();
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      days.push(date.toLocaleDateString());
+    }
+    return days;
+  }, []);
 
-  const monthlyLabels = Object.keys(monthlyStats);
   const estados = ["Pendiente", "Confirmada", "Finalizada", "Rechazada"];
 
-  const monthlyData = {
-    labels: monthlyLabels,
+  const dailyStats = useMemo(() => {
+    const result: Record<string, Record<string, number>> = {};
+    next7Days.forEach((date) => {
+      result[date] = {};
+      estados.forEach((estado) => {
+        result[date][estado] = 0;
+      });
+    });
+
+    reservation.forEach((r: any) => {
+      const date = new Date(r.date).toLocaleDateString();
+      if (result[date] && result[date][r.status] !== undefined) {
+        result[date][r.status] += 1;
+      }
+    });
+
+    return result;
+  }, [reservation, next7Days]);
+
+  const dailyData = {
+    labels: next7Days,
     datasets: estados.map((estado, idx) => ({
       label: estado,
       backgroundColor: ["#fbbf24", "#34d399", "#60a5fa", "#f87171"][idx],
-      data: monthlyLabels.map((month) => monthlyStats[month][estado] || 0),
+      data: next7Days.map((date) => dailyStats[date][estado]),
+      maxBarThickness: 30,
     })),
   };
-  
+
   const chartOptions = {
+    indexAxis: "y" as const,
+    responsive: true,
     plugins: {
       tooltip: {
         callbacks: {
           label: function (context: any) {
             const label = context.dataset.label || "";
-            const value = context.parsed.y;
-            const index = context.dataIndex;
-            const month = monthlyLabels[index];
-  
-            // Esta parte busca los usuarios con ese estado en ese mes
+            const value = context.parsed.x;
+            const date = context.label;
+
             const matchingUsers = reservation
               .filter((r) => {
-                const date = new Date(r.date);
-                const monthStr = date.toLocaleString("default", {
-                  month: "short",
-                  year: "numeric",
-                  weekday: "long",
-                  day: "numeric",
-                });
                 return (
-                  monthStr === month && r.status === label
+                  new Date(r.date).toLocaleDateString() === date &&
+                  r.status === label
                 );
               })
               .map((r) => capitalizeWords(r.nombre_usuario || "Desconocido"));
-  
+
             const uniqueUsers = [...new Set(matchingUsers)];
-  
-            return `${label}: ${value} \nResponsable: ${uniqueUsers.join(", ")}`;
+            return `${label}: ${value} \nResponsable: ${uniqueUsers.join(
+              ", "
+            )}`;
+          },
+        },
+      },
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+        max: 5,
+        ticks: {
+          stepSize: 1,
+          callback: function (tickValue: string | number) {
+            return typeof tickValue === "number" && Number.isInteger(tickValue)
+              ? tickValue
+              : "";
           },
         },
       },
     },
   };
-  
 
   const topUsers = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -119,44 +141,6 @@ export default function ReportReservation() {
       .sort((a, b) => b[1] - a[1]) // Orden descendente por número de reservas
       .slice(0, 5); // Toma solo los 5 primeros
   }, [reservation]);
-
-  //   const userData = {
-  //     labels: topUsers.map(([user]) => user),
-  //     datasets: [
-  //       {
-  //         label: "Reservas",
-  //         data: topUsers.map(([, count]) => count),
-  //         backgroundColor: [
-  //           "#a5b4fc",
-  //           "#f9a8d4",
-  //           "#6ee7b7",
-  //           "#fcd34d",
-  //           "#f87171",
-  //         ],
-  //       },
-  //     ],
-  //   };
-
-  //   const ratingStats = [1, 2, 3, 4, 5].map(
-  //     (r) => reservation.filter((res) => res.rating === r).length
-  //   );
-
-  //   const ratingData = {
-  //     labels: ["1 ⭐", "2 ⭐", "3 ⭐", "4 ⭐", "5 ⭐"],
-  //     datasets: [
-  //       {
-  //         label: "Votos",
-  //         data: ratingStats,
-  //         backgroundColor: [
-  //           "#f87171",
-  //           "#fbbf24",
-  //           "#facc15",
-  //           "#4ade80",
-  //           "#22d3ee",
-  //         ],
-  //       },
-  //     ],
-  //   };
 
   return (
     <ComponentCard title="Reportes de Reservas" className="w-full">
@@ -185,14 +169,8 @@ export default function ReportReservation() {
           <h2 className="text-md font-semibold mb-4">
             📅 Peticiones mensuales por estado
           </h2>
-          <Bar data={monthlyData} options={chartOptions} />
+          <Bar data={dailyData} options={chartOptions} />
         </div>
-
-        {/* Gráfico 3: Opiniones sobre la App */}
-        {/* <div>
-          <h2 className="text-xl font-semibold mb-4">⭐ Opiniones de la app</h2>
-          <Bar data={ratingData} />
-        </div> */}
       </div>
     </ComponentCard>
   );
