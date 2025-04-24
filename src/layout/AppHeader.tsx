@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSidebar } from "../context/SidebarContext";
 import UserDropdown from "../components/header/UserDropdown";
 import Cookies from "js-cookie";
-import logo from "../icons/logo.jpg";
+import logo from "../icons/logo.png";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
@@ -113,7 +113,7 @@ const AppHeader: React.FC = () => {
                 <h1 className="text-[15px] font-semibold text-white">
                   CENTRO PARA LA INDUSTRIA PETROQUIMICA
                 </h1>
-                <img src={logo} alt="logo" className="w-12 h-12 ml-2 mr-[-15px] rounded-full" />
+                <img src={logo} alt="logo" className="w-15 h-15 ml-2 mr-[-15px] rounded-full" />
               </>
             )}
           </div>
