@@ -105,10 +105,10 @@ router.post("/register-reservation", async (req, res) => {
     Se le informa que el usuario ${user_name} ha realizado una solicitud de reservación.
     
     Detalles de la reservación:
-    - Fecha: ${date}
-    - Hora de inicio: ${timeStart}
-    - Hora de finalización: ${timeEnd}
-    - Motivo: ${reason}
+    📅 Fecha: ${date}
+    🕒 Hora de inicio: ${timeStart}
+    🕒 Hora de finalización: ${timeEnd}
+    ✏️ Motivo: ${reason}
     
     Por favor, ingrese a su cuenta para gestionar esta petición:
     http://10.4.39.178:5173/signin
@@ -507,20 +507,19 @@ router.put("/reschedule-reservation/:id", async (req, res) => {
       subject: "Petición de Reservación",
       text: `Estimado administrador,
     
-    Se le informa que el usuario ${user_name} ha reajustado la reservación.
+  Se le informa que el usuario ${user_name} ha reajustado la reservación con los siguientes detalles:
     
-    Detalles de la reservación:
-    - Fecha: ${date}
-    - Hora de inicio: ${formattedTimeStart}
-    - Hora de finalización: ${formattedTimeEnd}
-    - Motivo: ${reason}
+  📅 Fecha: ${date}
+  🕒 Hora de inicio: ${formattedTimeStart}
+  🕓 Hora de finalización: ${formattedTimeEnd}
+  ✏️ Motivo: ${reason}
     
-    Por favor, ingrese a su cuenta para gestionar esta petición:
-    http://10.4.39.178:5173/signin
+  Puede ingresar a su cuenta para gestionar esta petición en el siguiente enlace:
+  http://10.4.39.178:5173/signin
     
-    Cordial saludo,
-    Sistema de Reservaciones`,
-    });
+  Cordial saludo,  
+  Sistema de Reservaciones`,
+    });    
 
     res
       .status(200)
