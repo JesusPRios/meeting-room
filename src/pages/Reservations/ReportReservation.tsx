@@ -40,23 +40,26 @@ export default function ReportReservation() {
     fetchReservations();
   }, []);
 
-  const next7Days = useMemo(() => {
-    const days = [];
-    const today = reservation.length > 0 ? new Date(reservation[0].date) : new Date();
-    console.log(today);
-    for (let i = 0; i > 7; i--) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      days.push(date.toLocaleDateString());
-    }
-    return days;
-  }, []);
-
   const estados = ["Pendiente", "Confirmada", "Finalizada", "Rechazada"];
+
+  const recentDates = useMemo(() => {
+    const uniqueDates = Array.from(
+      new Set(
+        reservation.map((r) =>
+          new Date(r.date).toLocaleDateString()
+        )
+      )
+    );
+
+    return uniqueDates
+      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+      .slice(0, 5)
+      .reverse();
+  }, [reservation]);
 
   const dailyStats = useMemo(() => {
     const result: Record<string, Record<string, number>> = {};
-    next7Days.forEach((date) => {
+    recentDates.forEach((date) => {
       result[date] = {};
       estados.forEach((estado) => {
         result[date][estado] = 0;
@@ -71,14 +74,14 @@ export default function ReportReservation() {
     });
 
     return result;
-  }, [reservation, next7Days]);
+  }, [reservation, recentDates]);
 
   const dailyData = {
-    labels: next7Days,
+    labels: recentDates,
     datasets: estados.map((estado, idx) => ({
       label: estado,
       backgroundColor: ["#fbbf24", "#34d399", "#60a5fa", "#f87171"][idx],
-      data: next7Days.map((date) => dailyStats[date][estado]),
+      data: recentDates.map((date) => dailyStats[date][estado]),
       maxBarThickness: 30,
     })),
   };
@@ -104,9 +107,7 @@ export default function ReportReservation() {
               .map((r) => capitalizeWords(r.nombre_usuario || "Desconocido"));
 
             const uniqueUsers = [...new Set(matchingUsers)];
-            return `${label}: ${value} \nResponsable: ${uniqueUsers.join(
-              ", "
-            )}`;
+            return `${label}: ${value} \nResponsable: ${uniqueUsers.join(", ")}`;
           },
         },
       },
@@ -130,24 +131,22 @@ export default function ReportReservation() {
   const topUsers = useMemo(() => {
     const counts: Record<string, number> = {};
 
-    // Cuenta cuántas veces aparece cada usuario
     reservation.forEach((r: any) => {
       const user = r.nombre_usuario || "Desconocido";
-      const userCapitalized = capitalizeWords(user); // Si tienes una función que capitaliza nombres
+      const userCapitalized = capitalizeWords(user);
       counts[userCapitalized] = (counts[userCapitalized] || 0) + 1;
     });
 
-    // Convierte el objeto en array y ordena de mayor a menor cantidad de reservas
     return Object.entries(counts)
-      .sort((a, b) => b[1] - a[1]) // Orden descendente por número de reservas
-      .slice(0, 5); // Toma solo los 5 primeros
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
   }, [reservation]);
 
   return (
     <ComponentCard title="Reportes de Reservas" className="w-full">
       <div className="p-3 space-y-12">
         <div>
-          <h2 className="text-xl font-semibold mb-4">Raiting de usuarios</h2>
+          <h2 className="text-xl font-semibold mb-4">⭐ Rating de usuarios</h2>
           <ul className="space-y-3">
             {topUsers.map(([user, count], index) => (
               <li
@@ -159,16 +158,16 @@ export default function ReportReservation() {
                   {user}
                 </span>
                 <span className="text-sm font-medium text-gray-800">
-                  {count} reserva(s) {index === 0}
+                  {count} reserva(s)
                 </span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="">
+        <div>
           <h2 className="text-md font-semibold mb-4">
-            📅 Peticiones mensuales por estado
+            📅 Reservas recientes por estado
           </h2>
           <Bar data={dailyData} options={chartOptions} />
         </div>
