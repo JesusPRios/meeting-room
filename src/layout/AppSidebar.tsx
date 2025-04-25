@@ -214,13 +214,13 @@ const AppSidebar: React.FC = () => {
           : renderMenuItems(navItems)}
       </div>
 
-      <button
+      {/* <button
         onClick={() => (window.location.href = "/signin")}
         className="absolute hover: bottom-3 w-[250px] p-2 bg-red-500 opacity-0 text-white rounded z-50 cursor-default"
         aria-hidden="true"
       >
         ......
-      </button>
+      </button> */}
     </aside>
   );
 };
