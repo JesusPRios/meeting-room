@@ -45,7 +45,7 @@ export const useReservation = () => {
   useEffect(() => {
     const gestionarReservaciones = async () => {
       try {
-        const res = await axios.get("http://10.4.39.178:3002/get-reservation");
+        const res = await axios.get("http://10.4.32.79:3002/get-reservation");
         const data = res.data;
         const ahora = new Date();
 
@@ -56,7 +56,7 @@ export const useReservation = () => {
             const finReserva = new Date(`${fechaISO}T${reserva.timeEnd}`);
             if (finReserva < ahora && reserva.status !== "Finalizada") {
               await axios.put(
-                `http://10.4.39.178:3002/update-reservation/${reserva.id}`,
+                `http://10.4.32.79:3002/update-reservation/${reserva.id}`,
                 {
                   status: "Finalizada",
                   fecha: reserva.date,
@@ -273,7 +273,7 @@ export const useReservation = () => {
     if (value.length >= 3) {
       try {
         const res = await axios.get(
-          `http://10.4.39.178:3002/search-users?cedula=${value}`
+          `http://10.4.32.79:3002/search-users?cedula=${value}`
         );
         setSugerencias(res.data);
       } catch (err) {
@@ -294,7 +294,7 @@ export const useReservation = () => {
     const formattedDate = date.toISOString().slice(0, 10);
     try {
       const response = await axios.get(
-        `http://10.4.39.178:3002/get-reservation-by-date/${formattedDate}`
+        `http://10.4.32.79:3002/get-reservation-by-date/${formattedDate}`
       );
       const data = response.data;
 
@@ -317,7 +317,7 @@ export const useReservation = () => {
   const getReservationById = async (id: number) => {
     try {
       const response = await axios.get(
-        `http://10.4.39.178:3002/get-reservation-by-id/${id}`
+        `http://10.4.32.79:3002/get-reservation-by-id/${id}`
       );
       const data = response.data;
 
@@ -365,7 +365,7 @@ export const useReservation = () => {
 
     try {
       const response = await axios.post(
-        "http://10.4.39.178:3002/register-reservation",
+        "http://10.4.32.79:3002/register-reservation",
         data,
         {
           headers: {
@@ -408,7 +408,7 @@ export const useReservation = () => {
 
     try {
       const response = await axios.put(
-        `http://10.4.39.178:3002/reschedule-reservation/${id}`,
+        `http://10.4.32.79:3002/reschedule-reservation/${id}`,
         data,
         {
           headers: {
@@ -441,7 +441,7 @@ export const useReservation = () => {
   const AcceptReservation = async (id: number, cedula: string) => {
     try {
       const response = await axios.post(
-        `http://10.4.39.178:3002/accept-reservation/${id}-${cedula}`
+        `http://10.4.32.79:3002/accept-reservation/${id}-${cedula}`
       );
       const { success } = response.data;
       return success;
@@ -453,7 +453,7 @@ export const useReservation = () => {
   const RejectReservation = async (id: number, cedula: string) => {
     try {
       const response = await axios.post(
-        `http://10.4.39.178:3002/reject-reservation/${id}-${cedula}`
+        `http://10.4.32.79:3002/reject-reservation/${id}-${cedula}`
       );
 
       const { success } = response.data;
@@ -467,7 +467,7 @@ export const useReservation = () => {
   const NotifyAdminReservationPending = async (id: number) => {
     try {
       const response = await axios.post(
-        `http://10.4.39.178:3002/notify-admin-reservation-pending/${id}`
+        `http://10.4.32.79:3002/notify-admin-reservation-pending/${id}`
       );
       const { success } = response.data;
       return success;

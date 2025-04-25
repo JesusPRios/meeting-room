@@ -31,7 +31,7 @@ export default function ReportReservation() {
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const res = await axios.get("http://10.4.39.178:3002/get-reservation");
+        const res = await axios.get("http://10.4.32.79:3002/get-reservation");
         setReservation(res.data);
       } catch (error) {
         console.error("Error fetching reservations", error);
@@ -42,8 +42,9 @@ export default function ReportReservation() {
 
   const next7Days = useMemo(() => {
     const days = [];
-    const today = new Date();
-    for (let i = 0; i < 7; i++) {
+    const today = reservation.length > 0 ? new Date(reservation[0].date) : new Date();
+    console.log(today);
+    for (let i = 0; i > 7; i--) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
       days.push(date.toLocaleDateString());
