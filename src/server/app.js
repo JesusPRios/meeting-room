@@ -21,7 +21,7 @@ app.use(
       const allowedOriginsPattern =
         /^http:\/\/localhost:(5173|5176|5174|3001)$/;
       const allowedIpPattern =
-        /^http:\/\/10\.4\.39\.178:(5173|5176|5174|3306|3002)$/; //10.4.39.178
+        /^http:\/\/10\.4\.32\.79:(5173|5176|5174|3306|3002)$/; //10.4.32.79
 
       // Check if the origin is allowed
       if (
