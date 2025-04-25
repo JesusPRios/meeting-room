@@ -6,6 +6,7 @@ import Label from "../../components/form/Label";
 import Button from "../../components/ui/button/Button";
 import { useReservation } from "../../hooks/useReservation";
 import { useEffect } from "react";
+import GIF from "../../../public/g0R5-unscreen.gif";
 
 export default function RepetitiveReservation() {
   const { id } = useParams();
@@ -14,6 +15,8 @@ export default function RepetitiveReservation() {
     handleDateChange,
     getReservationById,
     updateDateReservation,
+    setLoading,
+    loading,
   } = useReservation();
 
   useEffect(() => {
@@ -22,12 +25,24 @@ export default function RepetitiveReservation() {
     }
   }, [id]);
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    setLoading(true);
+
+    try {
+      await updateDateReservation(e, Number(id));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <ComponentCard
       title="Reagendar reserva para sala de conferencia"
       desc="Para reagendar la reunión, seleccione una fecha diferente a la original."
     >
-      <form onSubmit={(e) => updateDateReservation(e, Number(id))}>
+      <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2">
             <Label>Razón o motivo de la reunión</Label>
@@ -148,6 +163,11 @@ export default function RepetitiveReservation() {
           </Button>
         </div>
       </form>
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#39A900] bg-opacity-70">
+          <img src={GIF} alt="Cargando..." className="w-24 h-24" />
+        </div>
+      )}
     </ComponentCard>
   );
 }
