@@ -4,6 +4,8 @@ import Input from "../../components/form/input/InputField";
 import Button from "../../components/ui/button/Button";
 import { useReservation } from "../../hooks/useReservation";
 import GIF from "../../../public/g0R5-unscreen.gif";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function Content() {
   const {
@@ -25,6 +27,8 @@ export default function Content() {
     setLoading,
     formatTimeTo12Hour,
     information,
+    selectedDate,
+    isWeekday,
   } = useReservation();
 
   const isTimeOverlappingAny = (start: string, end: string) => {
@@ -49,8 +53,6 @@ export default function Content() {
     information.length > 0 &&
     isTimeOverlappingAny(reser.timeStart, reser.timeEnd);
 
-  const today = new Date();
-
   const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true);
 
@@ -65,6 +67,7 @@ export default function Content() {
 
   const formatTimeStart = formatTimeTo12Hour(reser?.timeStart);
   const formatTimeEnd = formatTimeTo12Hour(reser?.timeEnd);
+
   const formatReservedStart = reservedRange?.start
     ? formatTimeTo12Hour(reservedRange.start)
     : "";
@@ -93,15 +96,15 @@ export default function Content() {
               className="bg-transparent text-black border-gray-300 focus:border-brand-300 focus:ring focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800 w-full rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs focus:outline-none"
             />
           </div>
-          <div>
+          <div >
             <Label>Fecha de la reunión</Label>
-            <Input
-              required
-              type="date"
-              name="date"
-              min={today.toISOString().split("T")[0]}
-              autocomplete="off"
+            <DatePicker
+              selected={selectedDate}
               onChange={handleDateChange}
+              filterDate={isWeekday}
+              minDate={new Date()}
+              placeholderText="Selecciona una fecha"
+              className="h-11 w-full datepicker-input rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-none dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring focus:ring-brand-500/10 dark:border-gray-700"
             />
           </div>
           <div>
