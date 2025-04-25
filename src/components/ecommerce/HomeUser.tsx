@@ -74,9 +74,7 @@ export default function HomeUser() {
 
         <div className="col-span-2">
           <ComponentCard
-            title={`Información de las reservaciones ${
-              formattedDate ? formattedDate : ""
-            }`}
+           title={`Información de las reservaciones${formattedDate ? ` para el ${formattedDate}` : ""}`}
           >
             {selectedDate ? (
               <div>
