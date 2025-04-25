@@ -23,8 +23,8 @@ export const sendEmail = ({ to, from, subject, text, attachments = [] }) => {
       // Replace the username and password with your own
       smtp.login(
         {
-          user: "mjesusprimera@gmail.com",
-          pass: "hgyz sewu nncy qevx",
+          user: "conferenceroomsena@gmail.com",
+          pass: "bxus gyvg xvyr qhhp", //bxus gyvg xvyr qhhp
         },
         (loginErr) => {
           if (loginErr) {
