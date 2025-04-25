@@ -171,6 +171,11 @@ export const useReservation = () => {
 
   const filteredReservas = getFilteredReservaciones();
 
+  const isWeekday = (date: Date) => {
+    const day = date.getDay(); 
+    return day !== 0 && day !== 6; 
+  };  
+
   const handleReasonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReser((prevInformation) => ({
       ...(prevInformation || {}),
@@ -178,22 +183,14 @@ export const useReservation = () => {
     }));
   };
 
-  const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = new Date(e.target.value);
-    const day = selectedDate.getDay(); 
-    
-    if (day === 5 || day === 6) {
-      alert("No se permiten reservas los sábados ni domingos.");
+  const handleDateChange = (date: Date | null) => {
+    if (date === null) {
       return;
     }
-
-    setReser((prevInformation) => ({
-      ...(prevInformation || {}),
-      date: selectedDate,
-    }));
-
-    await getReservationByDate(selectedDate);
+    setSelectedDate(date);
+    getReservationByDate(date);
   };
+
 
   const isValidTime = (time: string) => {
     const [hour, minute] = time.split(":").map(Number);
@@ -205,9 +202,11 @@ export const useReservation = () => {
     const value = e.target.value;
 
     if (!isValidTime(value)) {
-      alert("Hora no permitida. Solo se puede reservar entre 08:00 a.m. – 12:00 p.m. y 02:00 p.m. – 05:00 p.m.");
+      alert(
+        "Hora no permitida. Solo se puede reservar entre 08:00 a.m. – 12:00 p.m. y 02:00 p.m. – 05:00 p.m."
+      );
       return;
-    }  
+    }
 
     setReser((prevInformation) => {
       const updated = {
@@ -219,7 +218,10 @@ export const useReservation = () => {
         updated.duration = calcularDuracion(value, updated.timeEnd);
       }
 
-      e.target.blur();
+      setTimeout(() => {
+        e.target.blur();
+      }, 5000);
+
       return updated;
     });
   };
@@ -228,7 +230,9 @@ export const useReservation = () => {
     const value = e.target.value;
 
     if (!isValidTime(value)) {
-      alert("Hora no permitida. Solo se puede reservar entre 08:00 a.m. – 12:00 p.m. y 02:00 p.m. – 05:00 p.m.");
+      alert(
+        "Hora no permitida. Solo se puede reservar entre 08:00 a.m. – 12:00 p.m. y 02:00 p.m. – 05:00 p.m."
+      );
       return;
     }
 
@@ -242,7 +246,9 @@ export const useReservation = () => {
         updated.duration = calcularDuracion(updated.timeStart, value);
       }
 
-      e.target.blur();
+      setTimeout(() => {
+        e.target.blur();
+      }, 5000);
       return updated;
     });
   };
@@ -498,6 +504,7 @@ export const useReservation = () => {
   };
 
   return {
+    isWeekday,
     setCurrentPage,
     currentPage,
     itemsPerPage,
