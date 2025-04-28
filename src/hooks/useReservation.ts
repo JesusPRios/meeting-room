@@ -501,7 +501,44 @@ export const useReservation = () => {
       .replace(/\b\w/g, (char: any) => char.toUpperCase());
   };
 
+  const isTimeOverlappingAny = (start: string, end: string) => {
+    return information.some((item) => {
+      const toMinutes = (t: string) => {
+        const [h, m] = t.split(":").map(Number);
+        return h * 60 + m;
+      };
+
+      const startMin = toMinutes(start);
+      const endMin = toMinutes(end);
+      const resStart = toMinutes(item.timeStart);
+      const resEnd = toMinutes(item.timeEnd);
+
+      return !(endMin <= resStart || startMin >= resEnd);
+    });
+  };
+    
+  const showConflict =
+    reser?.timeStart &&
+    reser?.timeEnd &&
+    information.length > 0 &&
+    isTimeOverlappingAny(reser.timeStart, reser.timeEnd);
+
+    
+  const formatTimeStart = formatTimeTo12Hour(reser?.timeStart);
+  const formatTimeEnd = formatTimeTo12Hour(reser?.timeEnd);
+
+  const formatReservedStart = reservedRange?.start
+    ? formatTimeTo12Hour(reservedRange.start)
+    : "";
+
+  const formatReservedEnd = reservedRange?.end
+    ? formatTimeTo12Hour(reservedRange.end)
+    : "";
+
+
   return {
+    showConflict,
+    isTimeOverlappingAny,
     isWeekday,
     setCurrentPage,
     currentPage,
@@ -554,5 +591,9 @@ export const useReservation = () => {
     setSuccessMessage,
     capitalizeFirstLetter,
     capitalizeWords,
+    formatTimeStart,
+    formatTimeEnd,
+    formatReservedStart,
+    formatReservedEnd,
   };
 };
