@@ -98,8 +98,8 @@ router.post("/register-reservation", async (req, res) => {
     ]);
 
     await sendEmail({
-      From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
       to: "sistemascip@sena.edu.co",
+      from: "conferenceroomsena@gmail.com",
       subject: "Petición de Reservación",
       text: `Estimado administrador,
     
@@ -119,9 +119,8 @@ router.post("/register-reservation", async (req, res) => {
     });
 
     await sendEmail({
-      From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
       to: user_email,
-      from: "Oficina de Sistemas <mjesusprimera@gmail.com>",
+      from: "conferenceroomsena@gmail.com",
       subject:
         "Solicitud de Reserva de Sala de Juntas Pendiente de Autorización",
       text: `Estimado/a ${user_name},
@@ -251,8 +250,8 @@ router.post("/accept-reservation/:id-:cedula", async (req, res) => {
     const user_name = user.name;
 
     await sendEmail({
-      From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
       to: user_email,
+      from: "conferenceroomsena@gmail.com",
       subject: "Reservación Aceptada",
       text: `Estimado/a ${user_name},
     
@@ -302,7 +301,7 @@ router.post("/reject-reservation/:id-:cedula", async (req, res) => {
 
     await sendEmail({
       to: user_email,
-      From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
+      from: "conferenceroomsena@gmail.com",
       subject: "Reservación Rechazada",
       text: `Estimado/a ${user_name},
 
@@ -379,8 +378,8 @@ router.put("/update-reservation/:id", async (req, res) => {
     }); 
     
     await sendEmail({
-      From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
       to: "sistemascip@sena.edu.co",
+      from: "conferenceroomsena@gmail.com",
       subject: "Petición de Reservación",
       text: `Estimado administrador,
     
@@ -401,7 +400,6 @@ router.put("/update-reservation/:id", async (req, res) => {
 
 router.post("/notify-admin-reservation-pending/:id", async (req, res) => {
   const { id } = req.params;
-  console.log(id);
 
   try {
     const sql = `SELECT * FROM meeting.reservation WHERE id = ?`;
@@ -424,8 +422,8 @@ router.post("/notify-admin-reservation-pending/:id", async (req, res) => {
       fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
 
     const data = {
-      From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
       to: "sistemascip@sena.edu.co",
+      from: "conferenceroomsena@gmail.com",
       subject: "Reservación Pendiente",
       text: `Estimado Administrador,
 
@@ -508,8 +506,8 @@ router.put("/reschedule-reservation/:id", async (req, res) => {
     const formattedTimeEnd = formatTimeTo12Hour(timeEnd);
 
     await sendEmail({
-      From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
       to: "sistemascip@sena.edu.co",
+      from: "conferenceroomsena@gmail.com",
       subject: "Petición de Reservación",
       text: `Estimado administrador,
     
