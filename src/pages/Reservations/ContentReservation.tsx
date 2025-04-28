@@ -18,40 +18,20 @@ export default function Content() {
     handleDurationChange,
     handleParticipantsChange,
     handleCedulaUserChange,
-    reservedRange,
     cedulaInput,
     setCedulaInput,
     sugerencias,
     setSugerencias,
     loading,
     setLoading,
-    formatTimeTo12Hour,
-    information,
     selectedDate,
     isWeekday,
+    showConflict,
+    formatTimeStart,
+    formatTimeEnd,
+    formatReservedStart,
+    formatReservedEnd,
   } = useReservation();
-
-  const isTimeOverlappingAny = (start: string, end: string) => {
-    return information.some((item) => {
-      const toMinutes = (t: string) => {
-        const [h, m] = t.split(":").map(Number);
-        return h * 60 + m;
-      };
-
-      const startMin = toMinutes(start);
-      const endMin = toMinutes(end);
-      const resStart = toMinutes(item.timeStart);
-      const resEnd = toMinutes(item.timeEnd);
-
-      return !(endMin <= resStart || startMin >= resEnd);
-    });
-  };
-
-  const showConflict =
-    reser?.timeStart &&
-    reser?.timeEnd &&
-    information.length > 0 &&
-    isTimeOverlappingAny(reser.timeStart, reser.timeEnd);
 
   const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true);
@@ -65,17 +45,6 @@ export default function Content() {
     }
   };
 
-  const formatTimeStart = formatTimeTo12Hour(reser?.timeStart);
-  const formatTimeEnd = formatTimeTo12Hour(reser?.timeEnd);
-
-  const formatReservedStart = reservedRange?.start
-    ? formatTimeTo12Hour(reservedRange.start)
-    : "";
-
-  const formatReservedEnd = reservedRange?.end
-    ? formatTimeTo12Hour(reservedRange.end)
-    : "";
-
   return (
     <ComponentCard
       title="Reserva para sala de conferencia"
@@ -83,7 +52,6 @@ export default function Content() {
     >
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
-          {/* Motivo */}
           <div className="col-span-2">
             <Label>Razón o motivo de la reunión</Label>
             <textarea
@@ -98,7 +66,6 @@ export default function Content() {
             />
           </div>
 
-          {/* Fecha, Hora inicio, Hora fin en la misma fila */}
           <div className="col-span-2 grid grid-cols-3 gap-4">
             <div>
               <Label>Fecha de la reunión</Label>
@@ -137,7 +104,6 @@ export default function Content() {
             </div>
           </div>
 
-          {/* Otros campos */}
           <div>
             <Label>Duración</Label>
             <Input
@@ -215,13 +181,13 @@ export default function Content() {
             </select>
           </div>
 
-          {/* Alerta de conflicto */}
           {showConflict && (
             <div className="col-span-2">
               <p className="text-red-600 font-semibold text-sm my-4">
-                ⚠️ El rango de hora seleccionado ({formatTimeStart} - {formatTimeEnd}) 
-                se superpone con otra reserva existente ({formatReservedStart} - {formatReservedEnd}). 
-                Por favor, elige un rango de horas diferente.
+                ⚠️ El rango de hora seleccionado ({formatTimeStart} -{" "}
+                {formatTimeEnd}) se superpone con otra reserva existente (
+                {formatReservedStart} - {formatReservedEnd}). Por favor, elige
+                un rango de horas diferente.
               </p>
             </div>
           )}
