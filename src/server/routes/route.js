@@ -264,12 +264,6 @@ router.post("/accept-reservation/:id-:cedula", async (req, res) => {
     Saludos cordiales,
     
     Oficina de Sistemas`,
-      priority: "high",
-      headers: {
-        "X-Priority": "1",
-        "X-MSMail-Priority": "High",
-        Importance: "high",
-      },
     });
 
     res
@@ -307,7 +301,7 @@ router.post("/reject-reservation/:id-:cedula", async (req, res) => {
 
 Lamentamos informarte que tu solicitud de reserva para la sala de juntas ha sido rechazada.
 
-Esto puede deberse a la no disponibilidad del espacio en la fecha y hora solicitada, o al incumplimiento de alguna condición establecida para el uso de la sala.
+Esto puede deberse a la no disponibilidad del espacio en la fecha y hora solicitada, o al incumplimiento de alguna condición establecida para el uso de la sala. Por favor, seleccione otra fecha y hora para reserva.
 
 Si deseas más información o necesitas asistencia para realizar una nueva solicitud, estamos a tu disposición para ayudarte. Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos a traves de el correo electronico: sistemascip@sena.edu.co
 
