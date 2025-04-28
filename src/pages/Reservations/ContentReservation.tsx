@@ -79,7 +79,7 @@ export default function Content() {
               />
             </div>
 
-            <div>
+            <div className="w-[110%] ml-[-70px]">
               <Label>Hora de inicio</Label>
               <Input
                 required
@@ -91,7 +91,7 @@ export default function Content() {
               />
             </div>
 
-            <div>
+            <div className="w-[114%] ml-[-40px]">
               <Label>Hora de fin</Label>
               <Input
                 required
