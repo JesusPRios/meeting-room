@@ -67,10 +67,10 @@ export const sendEmail = ({ to, from, subject, text, attachments = [] }) => {
           // Send the email with the message body
           smtp.send(
             {
-              from: "sistemascip@sena.edu.co",
+              from: "conferenceroomsena@gmail.com",
               to,
               headers: {
-                From: "Oficina de Sistemas <sistemascip@sena.edu.co>",
+                From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
                 "Reply-To": from,
                 "X-Priority": "1", // 1 = Alta, 3 = Normal, 5 = Baja
                 Priority: "urgent", // Opcional pero útil

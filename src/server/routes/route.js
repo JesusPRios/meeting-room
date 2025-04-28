@@ -98,6 +98,7 @@ router.post("/register-reservation", async (req, res) => {
     ]);
 
     await sendEmail({
+      From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
       to: "sistemascip@sena.edu.co",
       subject: "Petición de Reservación",
       text: `Estimado administrador,
@@ -111,13 +112,14 @@ router.post("/register-reservation", async (req, res) => {
     ✏️ Motivo: ${reason}
     
     Por favor, ingrese a su cuenta para gestionar esta petición:
-    http://10.4.39.178:5173/signin
+    http://10.4.33.50:5174/signin
     
     Cordial saludo,
     Sistema de Reservaciones`,
     });
 
     await sendEmail({
+      From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
       to: user_email,
       from: "Oficina de Sistemas <mjesusprimera@gmail.com>",
       subject:
@@ -249,6 +251,7 @@ router.post("/accept-reservation/:id-:cedula", async (req, res) => {
     const user_name = user.name;
 
     await sendEmail({
+      From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
       to: user_email,
       subject: "Reservación Aceptada",
       text: `Estimado/a ${user_name},
@@ -299,7 +302,7 @@ router.post("/reject-reservation/:id-:cedula", async (req, res) => {
 
     await sendEmail({
       to: user_email,
-      from: "Oficina de Sistemas <sistemascip@sena.edu.co>",
+      From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
       subject: "Reservación Rechazada",
       text: `Estimado/a ${user_name},
 
@@ -376,6 +379,7 @@ router.put("/update-reservation/:id", async (req, res) => {
     }); 
     
     await sendEmail({
+      From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
       to: "sistemascip@sena.edu.co",
       subject: "Petición de Reservación",
       text: `Estimado administrador,
@@ -420,6 +424,7 @@ router.post("/notify-admin-reservation-pending/:id", async (req, res) => {
       fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
 
     const data = {
+      From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
       to: "sistemascip@sena.edu.co",
       subject: "Reservación Pendiente",
       text: `Estimado Administrador,
@@ -428,7 +433,7 @@ Se le informa que una reservación programada para el día ${capitalizada} está
 La reunión está agendada para comenzar a las ${timeStart}.
 
 Por favor, acceda a su cuenta para gestionar esta petición:
-http://10.4.39.178:5173/signin
+http://10.4.33.50:5174/signin
 
 Cordial saludo,
 Sistema de Reservaciones
@@ -503,6 +508,7 @@ router.put("/reschedule-reservation/:id", async (req, res) => {
     const formattedTimeEnd = formatTimeTo12Hour(timeEnd);
 
     await sendEmail({
+      From: "Oficina de Sistemas <conferenceroomsena@gmail.com>",
       to: "sistemascip@sena.edu.co",
       subject: "Petición de Reservación",
       text: `Estimado administrador,
