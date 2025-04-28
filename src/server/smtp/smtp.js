@@ -15,8 +15,8 @@ export const sendEmail = async ({ to, subject, text, html, attachments = [] }) =
     from: 'Oficina de Sistemas SENA <conferenceroomsena@gmail.com>',
     to,
     subject,
-    text, // versión texto plano
-    html, // versión HTML bonita
+    text, 
+    html: html || `<p>${text.replace(/\n/g, '<br>')}</p>`,
     attachments,
     // headers: {
     //   "X-Priority": "1",
@@ -24,6 +24,8 @@ export const sendEmail = async ({ to, subject, text, html, attachments = [] }) =
     //   "X-Mailer": "Nodemailer",
     // },
   };
+
+  console.log(mailOptions);
 
   try {
     const info = await transporter.sendMail(mailOptions);
