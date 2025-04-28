@@ -79,10 +79,11 @@ export default function Content() {
   return (
     <ComponentCard
       title="Reserva para sala de conferencia"
-      desc="A continuación, encontrara el formulario correspondiente para registrar su reserva."
+      desc="A continuación, encontrará el formulario correspondiente para registrar su reserva."
     >
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
+          {/* Motivo */}
           <div className="col-span-2">
             <Label>Razón o motivo de la reunión</Label>
             <textarea
@@ -96,40 +97,47 @@ export default function Content() {
               className="bg-transparent text-black border-gray-300 focus:border-brand-300 focus:ring focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800 w-full rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs focus:outline-none"
             />
           </div>
-          <div >
-            <Label>Fecha de la reunión</Label>
-            <DatePicker
-              selected={selectedDate}
-              onChange={handleDateChange}
-              filterDate={isWeekday}
-              minDate={new Date()}
-              placeholderText="Selecciona una fecha"
-              className="h-11 w-full datepicker-input rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-none dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring focus:ring-brand-500/10 dark:border-gray-700"
-            />
-          </div>
-          <div>
-            <Label>Hora de inicio</Label>
-            <Input
-              required
-              type="time"
-              value={reser?.timeStart}
-              name="timeStart"
-              autocomplete="off"
-              onChange={handleTimeStartChange}
-            />
+
+          {/* Fecha, Hora inicio, Hora fin en la misma fila */}
+          <div className="col-span-2 grid grid-cols-3 gap-4">
+            <div>
+              <Label>Fecha de la reunión</Label>
+              <DatePicker
+                selected={selectedDate}
+                onChange={handleDateChange}
+                filterDate={isWeekday}
+                minDate={new Date()}
+                placeholderText="Selecciona una fecha"
+                className="h-11 w-full datepicker-input rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-none dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring focus:ring-brand-500/10 dark:border-gray-700"
+              />
+            </div>
+
+            <div>
+              <Label>Hora de inicio</Label>
+              <Input
+                required
+                type="time"
+                value={reser?.timeStart}
+                name="timeStart"
+                autocomplete="off"
+                onChange={handleTimeStartChange}
+              />
+            </div>
+
+            <div>
+              <Label>Hora de fin</Label>
+              <Input
+                required
+                type="time"
+                value={reser?.timeEnd}
+                name="timeEnd"
+                autocomplete="off"
+                onChange={handleTimeEndChange}
+              />
+            </div>
           </div>
 
-          <div>
-            <Label>Hora de fin</Label>
-            <Input
-              required
-              type="time"
-              value={reser?.timeEnd}
-              name="timeEnd"
-              autocomplete="off"
-              onChange={handleTimeEndChange}
-            />
-          </div>
+          {/* Otros campos */}
           <div>
             <Label>Duración</Label>
             <Input
@@ -143,19 +151,6 @@ export default function Content() {
             />
           </div>
 
-          <div>
-            <Label>Participantes</Label>
-            <textarea
-              required
-              value={reser?.participants}
-              name="participants"
-              autoComplete="off"
-              onChange={handleParticipantsChange}
-              placeholder="Escriba los nombres de los participantes"
-              rows={5}
-              className="bg-transparent text-black border-gray-300 focus:border-brand-300 focus:ring focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800 w-full rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs focus:outline-none"
-            />
-          </div>
           <div className="relative">
             <Label>Cédula del usuario</Label>
             <Input
@@ -186,6 +181,20 @@ export default function Content() {
             )}
           </div>
 
+          <div>
+            <Label>Participantes</Label>
+            <textarea
+              required
+              value={reser?.participants}
+              name="participants"
+              autoComplete="off"
+              onChange={handleParticipantsChange}
+              placeholder="Escriba los nombres de los participantes"
+              rows={5}
+              className="bg-transparent text-black border-gray-300 focus:border-brand-300 focus:ring focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800 w-full rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs focus:outline-none"
+            />
+          </div>
+
           <div className="relative">
             <Label>¿Reunión repetitiva?</Label>
             <select
@@ -205,16 +214,18 @@ export default function Content() {
               <option value="false">No</option>
             </select>
           </div>
-        </div>
 
-        {showConflict && (
-          <p className="text-red-600 font-semibold text-sm my-4 col-span-2">
-            ⚠️ El rango de hora seleccionado ({formatTimeStart} -{" "}
-            {formatTimeEnd}) se superpone con otra reserva existente (
-            {formatReservedStart} - {formatReservedEnd}). Por favor, elige un
-            rango de horas diferente.
-          </p>
-        )}
+          {/* Alerta de conflicto */}
+          {showConflict && (
+            <div className="col-span-2">
+              <p className="text-red-600 font-semibold text-sm my-4">
+                ⚠️ El rango de hora seleccionado ({formatTimeStart} - {formatTimeEnd}) 
+                se superpone con otra reserva existente ({formatReservedStart} - {formatReservedEnd}). 
+                Por favor, elige un rango de horas diferente.
+              </p>
+            </div>
+          )}
+        </div>
 
         <div className="flex justify-end">
           <Button
@@ -227,6 +238,7 @@ export default function Content() {
           </Button>
         </div>
       </form>
+
       {loading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#39A900] bg-opacity-70">
           <img src={GIF} alt="Cargando..." className="w-24 h-24" />
