@@ -359,15 +359,13 @@ export const useReservation = () => {
       timeStart: reser.timeStart,
       timeEnd: reser.timeEnd,
       reason: reser.reason,
-      date: reser.date.toISOString().split("T")[0],
+      date: selectedDate?.toISOString().split("T")[0],
       duration: duracionCalculada,
       participants: reser.participants,
       cedula_user: reser.cedula_user,
       status: "Pendiente",
       repetitive: repetitive,
     };
-
-    // console.log("Enviando reserva...", data);
 
     try {
       const response = await axios.post(
