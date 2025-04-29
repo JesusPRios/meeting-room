@@ -14,6 +14,7 @@ import ComponentCard from "../../components/common/ComponentCard";
 import { useReservation } from "../../hooks/useReservation";
 import Alert from "../../components/ui/alert/Alert";
 import GIF from "../../../public/g0R5-unscreen.gif";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 
 const ReservationDetails = () => {
   const { id } = useParams();
@@ -74,13 +75,15 @@ const ReservationDetails = () => {
   };
 
   const participants = reser.participants
-  ?.split(/,|\sy\s/)
-  .map((p) => capitalizeFirstLetter(p.trim())); 
+    ?.split(/,|\sy\s/)
+    .map((p) => capitalizeFirstLetter(p.trim()));
   const formattedTimeStart = formatTimeTo12Hour(reser.timeStart);
   const formattedTimeEnd = formatTimeTo12Hour(reser.timeEnd);
 
   return (
     <>
+      <PageBreadcrumb pageTitle="Detalles de la Reservación" />
+
       <div className="fixed top-24 right-15 z-50">
         {successMessage && (
           <Alert
