@@ -117,7 +117,26 @@ router.post("/register-reservation", async (req, res) => {
     Cordial saludo,
     Sistema de Reservaciones`,
     });
- 
+
+    await sendEmail({
+      to: user_email,
+      from: "conferenceroomsena@gmail.com",
+      subject:
+        "Solicitud de Reserva de Sala de Juntas Pendiente de Autorización",
+      text: `Estimado/a ${user_name},
+
+Gracias por tu solicitud de reserva para la sala de juntas. Queremos informarte que tu solicitud se encuentra actualmente pendiente de validación y autorización. En breve, nuestro equipo revisará la disponibilidad y condiciones para confirmar la reserva.
+
+Te notificaremos lo antes posible sobre el estado de tu solicitud.
+
+Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos a traves de el correo electronico: sistemascip@sena.edu.co
+
+Gracias por tu comprensión y paciencia.
+
+Saludos cordiales,
+Oficina de Sistemas`,
+    });
+
     res.status(200).json({
       message: "Reservation registered successfully",
       success: true,
@@ -350,8 +369,8 @@ router.put("/update-reservation/:id", async (req, res) => {
       year: "numeric",
       month: "long",
       day: "numeric",
-    }); 
-    
+    });
+
     await sendEmail({
       to: "sistemascip@sena.edu.co",
       from: "conferenceroomsena@gmail.com",
@@ -498,7 +517,7 @@ router.put("/reschedule-reservation/:id", async (req, res) => {
     
   Cordial saludo,  
   Sistema de Reservaciones`,
-    });    
+    });
 
     res
       .status(200)
