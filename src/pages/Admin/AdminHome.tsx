@@ -12,6 +12,8 @@ export default function AdminHome() {
     itemsPerPage,
   } = useReservation();
 
+  console.log(recientes);
+
   const totalPages = Math.ceil(recientes?.length / itemsPerPage) || 1;
 
   const paginatedData = recientes?.slice(
