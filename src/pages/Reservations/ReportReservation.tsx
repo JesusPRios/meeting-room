@@ -31,7 +31,7 @@ export default function ReportReservation() {
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const res = await axios.get("http://10.4.32.79:3002/get-reservation");
+        const res = await axios.get("http://10.4.33.50:3002/get-reservation");
         setReservation(res.data);
       } catch (error) {
         console.error("Error fetching reservations", error);
