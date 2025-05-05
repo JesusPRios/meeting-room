@@ -74,10 +74,10 @@ export const useReservation = () => {
           const fechaHora = new Date(r.date);
           const [h, m, s] = r.timeStart.split(":").map(Number);
           fechaHora.setHours(h, m, s || 0);
-          return fechaHora >= ahora && r.status === "Pendiente";
+          return fechaHora >= ahora && r.status === "Pendiente"; // SI TIENE PROBLEMAS CON MOSTRAR LA RESERVA ELIMINE EL SIGUIENTE CODIGO: fechaHora >= ahora &&  (SOLO QUEDA LA LINEA: return r.status === "Pendiente";)
         });
 
-        const confirmadas = data.filter((r: any) => r.status === "Confirmada");
+         const confirmadas = data.filter((r: any) => r.status === "Confirmada");
         const rechazadas = data.filter((r: any) => r.status === "Rechazada");
         const finalizadas = data.filter((r: any) => r.status === "Finalizada");
 
