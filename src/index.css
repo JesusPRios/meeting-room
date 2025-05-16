@@ -599,3 +599,8 @@ span.flatpickr-weekday,
 .fc.fc-media-screen {
   @apply min-h-screen;
 }
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
