@@ -220,7 +220,7 @@ export const useReservation = () => {
 
       setTimeout(() => {
         e.target.blur();
-      }, 5000);
+      }, 10000);
 
       return updated;
     });
@@ -243,12 +243,13 @@ export const useReservation = () => {
       };
 
       if (updated.timeStart) {
+        console.log("updated.timeStart", updated.timeStart);
         updated.duration = calcularDuracion(updated.timeStart, value);
       }
 
       setTimeout(() => {
         e.target.blur();
-      }, 5000);
+      }, 10000);
       return updated;
     });
   };
