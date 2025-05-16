@@ -99,6 +99,7 @@ export default function Content() {
                 value={reser?.timeEnd}
                 name="timeEnd"
                 autocomplete="off"
+                className="text"
                 onChange={handleTimeEndChange}
               />
             </div>
