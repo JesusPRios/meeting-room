@@ -20,7 +20,7 @@ app.use(
       // The allowed origins are specified in the config file
       const allowedOriginsPattern =
         /^http:\/\/localhost:(5173|5176|5174|3001)$/;
-      const allowedIpPattern = /^http:\/\/10\.4\.33\.50:(5174)$/; //10.4.33.50:5174
+      const allowedIpPattern = /^http:\/\/10\.4\.33\.50:(5174|5173)$/; //10.4.33.50:5174
 
       // Check if the origin is allowed
       if (
